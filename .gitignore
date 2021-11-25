@@ -1,0 +1,14 @@
+# Certs files
+certs/*.key
+certs/*.crt
+
+# Build Files
+build/dataserver
+build/geomserver
+build/client
+build/goclient
+
+# VS Code Related files
+.vscode/configurationCache.log
+.vscode/dryrun.log
+.vscode/settings.json
