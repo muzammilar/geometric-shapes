@@ -6,12 +6,13 @@ PWD := $(shell pwd)
 DEFAULT_VERSION := 0.0.1 # the default application version
 BENCH_CPUS := 1          # number of cpus for benchmark testing
 BENCH_ITERATIONS := 1000 # number of iterations for benchmark testing
+ # For now, we skip the "go" (for simplicty). If an external program imports it, they'll provide full path
 GOMODULENAME := "github.com/muzammilar/geometric-shapes"
 
 SERVER_VERSION := ${DEFAULT_VERSION}
 CLIENT_VERSION := ${DEFAULT_VERSION}
 
-.PHONY: all clean gomodule clean_gomodule
+.PHONY: all clean test lint gomodule clean_gomodule gomodinit gomodtidy goget
 
 all: clean gomodtidy test
 

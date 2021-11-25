@@ -16,7 +16,7 @@ DATASERVER=dataserver
 GOCLIENT=goclient
 GODIR=go
 
-.PHONY: all clean certs gomodule protos clean_certs clean_protos clean_gomodule
+.PHONY: all clean certs clean_certs protos clean_protos test lint gomodule gomodinit go
 
 all: clean protos go certs ${DATASERVER} ${GEOMSERVER} ${GOCLIENT}
 
@@ -26,10 +26,10 @@ clean:
 	-rm -f build/${GOCLIENT}
 
 clean_protos:
-	$(MAKE) clean -C protos
+	$(MAKE) clean -C protodata
 
 protos: clean_protos
-	$(MAKE) $@ -C protos
+	$(MAKE) $@ -C protodata
 
 ${DATASERVER}:
 	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${DATASERVER} ./${GODIR}/cmd/dataserver/dataserver.go
