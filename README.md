@@ -31,3 +31,7 @@ docker-compose rm --force --stop -v
 ## Examples:
 Some good gRPC examples are available here:
 * https://github.com/grpc/grpc-web
+
+## Notes:
+Due to the go module being called `github.com/muzammilar/geometric-shapes` and not `github.com/muzammilar/geometric-shapes/go`, calling this go module from external repos, might lead to inconsistency.
+One way to solve this problem is to use multiple repositories. Another way to solve this is to move the go code to `github.com/muzammilar/geometric-shapes/go/geometric-shapes` and make that a new module (however, using `-` in package name can cause other side effects).
