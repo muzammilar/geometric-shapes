@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/muzammilar/examples-go/geometry-grpc/pkg/serverstats"
+	"github.com/muzammilar/geometric-shapes/pkg/serverstats"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"

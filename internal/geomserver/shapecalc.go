@@ -8,7 +8,7 @@ package geomserver
  * HTTP Server Package
  */
 import (
-	"github.com/muzammilar/examples-go/geometry-grpc/protos/shapecalc"
+	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
 	"github.com/sirupsen/logrus"
 )
 

@@ -15,7 +15,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/muzammilar/examples-go/geometry-grpc/protos/shape"
+	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )

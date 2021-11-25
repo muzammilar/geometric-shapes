@@ -4,7 +4,7 @@ package shapecalc
 
 import (
 	context "context"
-	shape "github.com/muzammilar/examples-go/geometry-grpc/protos/shape"
+	shape "github.com/muzammilar/geometric-shapes/protos/shape"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"

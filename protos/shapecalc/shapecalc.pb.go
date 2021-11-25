@@ -7,7 +7,7 @@
 package shapecalc
 
 import (
-	shape "github.com/muzammilar/examples-go/geometry-grpc/protos/shape"
+	shape "github.com/muzammilar/geometric-shapes/protos/shape"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

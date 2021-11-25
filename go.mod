@@ -1,4 +1,4 @@
-module github.com/muzammilar/examples-go/geometry-grpc
+module github.com/muzammilar/geometric-shapes
 
 go 1.17
 

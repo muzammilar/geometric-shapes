@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package shapecalc;
 
-option go_package = "github.com/muzammilar/examples-go/geometry-grpc/protos/shapecalc";
+option go_package = "github.com/muzammilar/geometric-shapes/protos/shapecalc";
 
 import "shape/shape.proto";
 

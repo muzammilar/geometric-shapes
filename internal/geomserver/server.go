@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/muzammilar/examples-go/geometry-grpc/pkg/grpcserver"
-	"github.com/muzammilar/examples-go/geometry-grpc/protos/shapecalc"
+	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
+	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
 	"github.com/sirupsen/logrus"
 )
 
