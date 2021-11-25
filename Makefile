@@ -14,10 +14,11 @@ CLIENT_VERSION := ${DEFAULT_VERSION}
 GEOMSERVER=geomserver
 DATASERVER=dataserver
 GOCLIENT=goclient
+GODIR=go
 
 .PHONY: all clean certs gomodule protos clean_certs clean_protos clean_gomodule
 
-all: clean gomodtidy protos certs ${DATASERVER} ${GEOMSERVER} ${GOCLIENT}
+all: clean protos go certs ${DATASERVER} ${GEOMSERVER} ${GOCLIENT}
 
 clean:
 	-rm -f build/${DATASERVER}
@@ -31,39 +32,25 @@ protos: clean_protos
 	$(MAKE) $@ -C protos
 
 ${DATASERVER}:
-	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${DATASERVER} ./cmd/dataserver/dataserver.go
+	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${DATASERVER} ./${GODIR}/cmd/dataserver/dataserver.go
 
 ${GEOMSERVER}:
-	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${GEOMSERVER} ./cmd/geomserver/geomserver.go
+	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${GEOMSERVER} ./${GODIR}/cmd/geomserver/geomserver.go
 
 ${GOCLIENT}:
-	go build -ldflags "-X main.version=${CLIENT_VERSION}" -o build/${GOCLIENT} ./cmd/client/client.go
+	go build -ldflags "-X main.version=${CLIENT_VERSION}" -o build/${GOCLIENT} ./${GODIR}/cmd/client/client.go
 
-test:
-# check for raceconditions
-	go test -race ./...
-# run the benchmark tests
-	go test -cpu ${BENCH_CPUS} -benchmem -benchtime ${BENCH_ITERATIONS}x -bench=. ./...
+# run make all on the go directory
+go:
+	$(MAKE) -C ${GODIR}
 
-lint:
-	golint ./...
+# language agnostic commands
+test lint:
+	$(MAKE) $@ -C ${GODIR}
 
-# clean the go module
-clean_gomodule:
-	-rm -f go.mod go.sum
-
-# initialize module
-gomodinit:
-	go mod init ${GOMODULENAME}
-
-# add module requirements and sums
-gomodtidy:
-	go mod tidy
-
-gomodule: clean_gomodule gomodinit gomodtidy
-
-goget:
-	go get -d -v ./...
+# go specific commands
+gomodule gomodinit:
+	$(MAKE) $@ -C ${GODIR}
 
 clean_certs:
 	-rm -f certs/*
