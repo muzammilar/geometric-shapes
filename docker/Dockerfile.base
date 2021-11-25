@@ -26,6 +26,9 @@ LABEL Name=geometry/protobuilder Version=${TAG}
 FROM protobuilder AS baseimage
 ARG TAG
 RUN apk add --no-cache openssl
+# gcc needs musl-dev on alpine, alternatively use libc6-compat (not preferred)
+RUN apk add --no-cache musl-dev
+RUN apk add --no-cache gcc
 # make gomodule if it doesn't exist
 # RUN make gomodule
 # make everything (including certs and protos)

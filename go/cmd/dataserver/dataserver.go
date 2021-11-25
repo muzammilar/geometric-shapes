@@ -2,6 +2,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"math/rand"
 	"net"
@@ -15,13 +16,18 @@ var (
 )
 
 func main() {
+	var dataPort int
+	// flags
+	httpPortPtr := flag.Int("httpport", 8123, "The port for the HTTP web server .")     // skip validation
+	flag.IntVar(&dataPort, "dataport", 8123, "The port for the gRPC data application.") // skip validation
+
 	// initialize global pseudo random generator
 	rand.Seed(time.Now().Unix())
 
 	// http addresses
-	httpAddr := net.JoinHostPort("", strconv.Itoa(1234))
+	httpAddr := net.JoinHostPort("", strconv.Itoa(*httpPortPtr))
 	for {
-		fmt.Printf("Hello! This program was compiled on `%s`.\n", commit)
+		fmt.Printf("Hello! This program was compiled on '%s' and has a port '%s'.\n", commit, httpAddr)
 		time.Sleep(30 * time.Second)
 	}
 

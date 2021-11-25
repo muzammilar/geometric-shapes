@@ -9,6 +9,7 @@ package client
  */
 import (
 	"context"
+	"fmt"
 
 	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"google.golang.org/grpc"
@@ -20,7 +21,7 @@ import (
 
 // Create an HTTP Server and register all the required endpoints
 func StartClient(addr string) {
-	conn, err := grpc.Dial(addr, grpc.WithInsecure)
+	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {
 		// TODO error
 	}
@@ -31,4 +32,6 @@ func StartClient(addr string) {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	fmt.Println(storeClient, ctx)
 }

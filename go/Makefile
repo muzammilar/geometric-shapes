@@ -1,11 +1,17 @@
 
 
-# Variables
+## Variables
 COMMIT := $(shell /usr/bin/git describe --always)
 PWD := $(shell pwd)
-DEFAULT_VERSION := 0.0.1 # the default application version
-BENCH_CPUS := 1          # number of cpus for benchmark testing
-BENCH_ITERATIONS := 1000 # number of iterations for benchmark testing
+# the default application version
+DEFAULT_VERSION := 0.0.1
+# number of cpus for benchmark testing
+BENCH_CPUS := 1
+# number of iterations for benchmark testing - no whitespace after variable
+# If comment is added after number below, that would add a space
+#BENCH_ITERATIONS :=1000 # extra space added
+#BENCH_ITERATIONS :=1000# no extra space added
+BENCH_ITERATIONS :=1000
  # For now, we skip the "go" (for simplicty). If an external program imports it, they'll provide full path
 GOMODULENAME := "github.com/muzammilar/geometric-shapes"
 

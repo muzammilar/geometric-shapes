@@ -55,13 +55,13 @@ func StartServer(wg *sync.WaitGroup, addr string, ctx context.Context, logger *l
 		// Wait for context to be done before shutting down
 		<-ctx.Done()
 		if err := server.Shutdown(context.Background()); err != nil {
-			logger.Warn("HTTP Server failed to shutdown: %#v", err)
+			logger.Warnf("HTTP Server failed to shutdown: %#v", err)
 		}
 	}()
 
 	// start the http server and ignore 'server closed' errors
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		logger.Warn("HTTP Server failed to listen and serve: %#v", err)
+		logger.Warnf("HTTP Server failed to listen and serve: %#v", err)
 	}
 	// server shutdown is complete
 }
