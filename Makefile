@@ -18,7 +18,7 @@ GODIR=go
 
 .PHONY: all clean certs clean_certs protos clean_protos test lint gomodule gomodinit go
 
-all: clean protos go certs ${DATASERVER} ${GEOMSERVER} ${GOCLIENT}
+all: clean protos go ${DATASERVER} ${GEOMSERVER} ${GOCLIENT}
 
 clean:
 	-rm -f build/${DATASERVER}

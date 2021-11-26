@@ -16,10 +16,10 @@ var (
 )
 
 func main() {
-	var dataPort int
+	var grpcPort int
 	// flags
-	httpPortPtr := flag.Int("httpport", 8123, "The port for the HTTP web server .")     // skip validation
-	flag.IntVar(&dataPort, "dataport", 8123, "The port for the gRPC data application.") // skip validation
+	httpPortPtr := flag.Int("httpport", 8123, "The port for the HTTP web server .") // skip validation
+	flag.IntVar(&grpcPort, "port", 8120, "The port for the gRPC data application.") // skip validation
 
 	// initialize global pseudo random generator
 	rand.Seed(time.Now().Unix())

@@ -2,13 +2,13 @@
 An example of gRPC Servers and multi-lingual clients. A basic golang gRPC example (with server certificates).
 
 ```sh
-## Step 1: (Can be skipped)
+## Step 1: (Can be skipped) (one time)
 # Build the protobufs (and generate the *.pb.go files).
 # The second command will run "make protos" in the container as well as recreate go module/update dependencies
 docker-compose up --detach --build protobuilder
 docker-compose run --rm protobuilder
 
-## Step 2:
+## Step 2
 # Build the base image.
 # Since docker-compose currently doesn't support copying from local images (between multiple Dockerfiles),
 # we use the host Operating system to copy the files as needed.
@@ -19,10 +19,15 @@ docker-compose run --rm basebuilder bash
 docker-compose run --rm basebuilder sh
 docker-compose run --rm basebuilder /bin/sh
 
+## Step 3: (Can be skipped) (one time)
+# Build the certs using basebuilder
+docker-compose run --rm  basebuilder make certs
 
+
+## Step 4:
+# Run the containers.
 # Run the grpc servers and clients
 docker-compose up --build --detach
-
 
 # Shutdown everything (and remove volumes)
 docker-compose rm --force --stop -v
