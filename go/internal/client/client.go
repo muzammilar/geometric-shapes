@@ -16,7 +16,7 @@ import (
 )
 
 /*
- * Constants
+ * Public Functions
  */
 
 // Create an HTTP Server and register all the required endpoints

@@ -24,8 +24,8 @@ import (
  * Constants
  */
 
-// Create an HTTP Server and register all the required endpoints
-func StartServer(wg *sync.WaitGroup, addr string, ctx context.Context, logger *logrus.Logger) {
+// Create an HTTP Server, and registers all the required endpoints. This function is blocking (and should run in a go routine).
+func Serve(wg *sync.WaitGroup, addr string, ctx context.Context, logger *logrus.Logger) {
 
 	// if there's a wait group implemented, then notify about the thread finishing
 	if wg != nil {

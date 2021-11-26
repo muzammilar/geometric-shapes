@@ -19,7 +19,7 @@ docker-compose run --rm basebuilder bash
 docker-compose run --rm basebuilder sh
 docker-compose run --rm basebuilder /bin/sh
 
-## Step 3: (Can be skipped) (one time)
+## Step 3: (One time only - Usually an offline stage)
 # Build the certs using basebuilder
 docker-compose run --rm  basebuilder make certs
 
@@ -27,6 +27,7 @@ docker-compose run --rm  basebuilder make certs
 ## Step 4:
 # Run the containers.
 # Run the grpc servers and clients
+# Note: This will start the protobuilder and basebuilder containers as well.
 docker-compose up --build --detach
 
 # Shutdown everything (and remove volumes)
