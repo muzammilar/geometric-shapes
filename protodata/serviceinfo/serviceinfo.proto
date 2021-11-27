@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package serviceinfo;
+
+option go_package = "github.com/muzammilar/geometric-shapes/protos/serviceinfo";
+
+message Info {
+  Version version = 1; // server version
+  Server server = 2; // name of the server
+}
+
+message Version {
+  string name = 1;
+}
+
+message Server {
+  string name = 1;
+}

@@ -4,7 +4,12 @@ package shapecalc;
 
 option go_package = "github.com/muzammilar/geometric-shapes/protos/shapecalc";
 
+// relative/local import
 import "shape/shape.proto";
+import "serviceinfo/serviceinfo.proto";
+
+// imported from protobuf-dev
+import "google/protobuf/empty.proto";
 
 
 // Interface exported by the server.
@@ -25,10 +30,26 @@ service Geometry {
     // huge number of features.
     rpc ListRectangleCoordinates(shape.Rectangle) returns (stream shape.PlanarCoordinates) {}
 
+    // Two services with the same method name and signature (see version method below) implemented by the same gRPC server
+    rpc Version(google.protobuf.Empty) returns (serviceinfo.Info) {}
+
+    // The following method will not work if both this `Info` and `Geometry` services are implemented by the same server (in golang)
+    // Go does not support overloading of user-defined functions on their argument types
+    // Both services have the same method name but different return types
+    // rpc VersionDetails(google.protobuf.Empty) returns (serviceinfo.Server) {}
+
 }
 
 // Interface exported by the server.
 service Info {
     // A simple RPC.
     rpc RectangleInfo(shape.Rectangle) returns (shape.ShapeInfo) {}
+
+    // Two services with the same method name and signature (see version method above) implemented by the same gRPC server
+    rpc Version(google.protobuf.Empty) returns (serviceinfo.Info) {}
+
+    // The following method will not work if both this `Info` and `Geometry` services are implemented by the same server (in golang)
+    // Go does not support overloading of user-defined functions on their argument types
+    // Both services have the same method name but different return types
+    // rpc VersionDetails(google.protobuf.Empty) returns (serviceinfo.Version) {}
 }

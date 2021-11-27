@@ -13,9 +13,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/muzammilar/geometric-shapes/protos/serviceinfo"
 	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
 	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -32,6 +34,28 @@ type GeometryServer struct {
 	// Other internal use variables
 	logger *logrus.Logger  // a shared logger (can be a bottleneck)
 	wg     *sync.WaitGroup // a wait group to track all the request
+	// server information
+	name    string // name of the server
+	version string // version of the server
+}
+
+/*
+ * Functions - Shared by both Service Server
+ */
+
+// If the following function is not implemented, there would be ambiguity
+// GeometryServer.Version is ambiguous
+// cannot use geometryHandler (type *GeometryServer) as type shapecalc.GeometryServer in argument to shapecalc.RegisterGeometryServer:
+//        *GeometryServer does not implement shapecalc.GeometryServer (missing Version method)
+func (g *GeometryServer) Version(ctx context.Context, e *emptypb.Empty) (*serviceinfo.Info, error) {
+	return &serviceinfo.Info{
+		Server: &serviceinfo.Server{
+			Name: fmt.Sprintf("%s (%T)", g.name, g),
+		},
+		Version: &serviceinfo.Version{
+			Name: g.version,
+		},
+	}, nil
 }
 
 /*

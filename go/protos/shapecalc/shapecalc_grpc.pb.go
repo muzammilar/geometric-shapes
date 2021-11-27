@@ -4,10 +4,12 @@ package shapecalc
 
 import (
 	context "context"
+	serviceinfo "github.com/muzammilar/geometric-shapes/protos/serviceinfo"
 	shape "github.com/muzammilar/geometric-shapes/protos/shape"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -33,6 +35,8 @@ type GeometryClient interface {
 	// repeated field), as the rectangle may cover a large area and contain a
 	// huge number of features.
 	ListRectangleCoordinates(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (Geometry_ListRectangleCoordinatesClient, error)
+	// Two services with the same method name and signature (see version method below) implemented by the same gRPC server
+	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*serviceinfo.Info, error)
 }
 
 type geometryClient struct {
@@ -84,6 +88,15 @@ func (x *geometryListRectangleCoordinatesClient) Recv() (*shape.PlanarCoordinate
 	return m, nil
 }
 
+func (c *geometryClient) Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*serviceinfo.Info, error) {
+	out := new(serviceinfo.Info)
+	err := c.cc.Invoke(ctx, "/shapecalc.Geometry/Version", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GeometryServer is the server API for Geometry service.
 // All implementations must embed UnimplementedGeometryServer
 // for forward compatibility
@@ -102,6 +115,8 @@ type GeometryServer interface {
 	// repeated field), as the rectangle may cover a large area and contain a
 	// huge number of features.
 	ListRectangleCoordinates(*shape.Rectangle, Geometry_ListRectangleCoordinatesServer) error
+	// Two services with the same method name and signature (see version method below) implemented by the same gRPC server
+	Version(context.Context, *emptypb.Empty) (*serviceinfo.Info, error)
 	mustEmbedUnimplementedGeometryServer()
 }
 
@@ -114,6 +129,9 @@ func (UnimplementedGeometryServer) ComputeRectangleArea(context.Context, *shape.
 }
 func (UnimplementedGeometryServer) ListRectangleCoordinates(*shape.Rectangle, Geometry_ListRectangleCoordinatesServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListRectangleCoordinates not implemented")
+}
+func (UnimplementedGeometryServer) Version(context.Context, *emptypb.Empty) (*serviceinfo.Info, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
 func (UnimplementedGeometryServer) mustEmbedUnimplementedGeometryServer() {}
 
@@ -167,6 +185,24 @@ func (x *geometryListRectangleCoordinatesServer) Send(m *shape.PlanarCoordinates
 	return x.ServerStream.SendMsg(m)
 }
 
+func _Geometry_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeometryServer).Version(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shapecalc.Geometry/Version",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeometryServer).Version(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Geometry_ServiceDesc is the grpc.ServiceDesc for Geometry service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -177,6 +213,10 @@ var Geometry_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ComputeRectangleArea",
 			Handler:    _Geometry_ComputeRectangleArea_Handler,
+		},
+		{
+			MethodName: "Version",
+			Handler:    _Geometry_Version_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
@@ -195,6 +235,8 @@ var Geometry_ServiceDesc = grpc.ServiceDesc{
 type InfoClient interface {
 	// A simple RPC.
 	RectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
+	// Two services with the same method name and signature (see version method above) implemented by the same gRPC server
+	Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*serviceinfo.Info, error)
 }
 
 type infoClient struct {
@@ -214,12 +256,23 @@ func (c *infoClient) RectangleInfo(ctx context.Context, in *shape.Rectangle, opt
 	return out, nil
 }
 
+func (c *infoClient) Version(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*serviceinfo.Info, error) {
+	out := new(serviceinfo.Info)
+	err := c.cc.Invoke(ctx, "/shapecalc.Info/Version", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InfoServer is the server API for Info service.
 // All implementations must embed UnimplementedInfoServer
 // for forward compatibility
 type InfoServer interface {
 	// A simple RPC.
 	RectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error)
+	// Two services with the same method name and signature (see version method above) implemented by the same gRPC server
+	Version(context.Context, *emptypb.Empty) (*serviceinfo.Info, error)
 	mustEmbedUnimplementedInfoServer()
 }
 
@@ -229,6 +282,9 @@ type UnimplementedInfoServer struct {
 
 func (UnimplementedInfoServer) RectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RectangleInfo not implemented")
+}
+func (UnimplementedInfoServer) Version(context.Context, *emptypb.Empty) (*serviceinfo.Info, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Version not implemented")
 }
 func (UnimplementedInfoServer) mustEmbedUnimplementedInfoServer() {}
 
@@ -261,6 +317,24 @@ func _Info_RectangleInfo_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Info_Version_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServer).Version(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shapecalc.Info/Version",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServer).Version(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Info_ServiceDesc is the grpc.ServiceDesc for Info service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -271,6 +345,10 @@ var Info_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RectangleInfo",
 			Handler:    _Info_RectangleInfo_Handler,
+		},
+		{
+			MethodName: "Version",
+			Handler:    _Info_Version_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
