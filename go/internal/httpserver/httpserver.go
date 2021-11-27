@@ -38,6 +38,8 @@ func Serve(wg *sync.WaitGroup, addr string, ctx context.Context, logger *logrus.
 	mux := http.NewServeMux()
 
 	// a basic helloworld handler
+	mux.HandleFunc("/", hellogrpc) // cath all handler
+
 	mux.HandleFunc("/hello", hellogrpc)
 
 	// a basic hellojson handler
