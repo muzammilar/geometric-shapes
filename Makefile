@@ -1,44 +1,24 @@
 
-
-# Variables
-COMMIT := $(shell /usr/bin/git describe --always)
-DEFAULT_VERSION := 0.0.1 # the default application version
-BENCH_CPUS := 1          # number of cpus for benchmark testing
-BENCH_ITERATIONS := 1000 # number of iterations for benchmark testing
-GOMODULENAME := "github.com/muzammilar/geometric-shapes"
-
-SERVER_VERSION := ${DEFAULT_VERSION}
-CLIENT_VERSION := ${DEFAULT_VERSION}
+# includes
+include ./Makefile.variable
 
 # Applications
-GEOMSERVER=geomserver
-DATASERVER=dataserver
-GOCLIENT=goclient
 GODIR=go
 
 .PHONY: all clean certs clean_certs protos clean_protos test lint gomodule gomodinit go
 
-all: clean protos go ${DATASERVER} ${GEOMSERVER} ${GOCLIENT}
+all: clean protos go ${GO_DATASERVER} ${GO_GEOMSERVER} ${GO_GOCLIENT}
 
 clean:
-	-rm -f build/${DATASERVER}
-	-rm -f build/${GEOMSERVER}
-	-rm -f build/${GOCLIENT}
+	-rm -f ${BUILD_DIR}/${GO_DATASERVER}
+	-rm -f ${BUILD_DIR}/${GO_GEOMSERVER}
+	-rm -f ${BUILD_DIR}/${GO_CLIENT}
 
 clean_protos:
 	$(MAKE) clean -C protodata
 
 protos: clean_protos
 	$(MAKE) $@ -C protodata
-
-${DATASERVER}:
-	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${DATASERVER} ./${GODIR}/cmd/dataserver/dataserver.go
-
-${GEOMSERVER}:
-	go build -ldflags "-X main.version=${SERVER_VERSION}" -o build/${GEOMSERVER} ./${GODIR}/cmd/geomserver/geomserver.go
-
-${GOCLIENT}:
-	go build -ldflags "-X main.version=${CLIENT_VERSION}" -o build/${GOCLIENT} ./${GODIR}/cmd/client/client.go
 
 # run make all on the go directory
 go:
@@ -49,7 +29,7 @@ test lint:
 	$(MAKE) $@ -C ${GODIR}
 
 # go specific commands
-gomodule gomodinit:
+gomodule gomodinit ${GO_DATASERVER} ${GO_GEOMSERVER} ${GO_GOCLIENT}:
 	$(MAKE) $@ -C ${GODIR}
 
 clean_certs:

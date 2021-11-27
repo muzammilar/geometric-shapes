@@ -1,10 +1,9 @@
 
+## includes
+include ../Makefile.variable
 
 ## Variables
-COMMIT := $(shell /usr/bin/git describe --always)
 PWD := $(shell pwd)
-# the default application version
-DEFAULT_VERSION := 0.0.1
 # number of cpus for benchmark testing
 BENCH_CPUS := 1
 # number of iterations for benchmark testing - no whitespace after variable
@@ -12,15 +11,27 @@ BENCH_CPUS := 1
 #BENCH_ITERATIONS :=1000 # extra space added
 #BENCH_ITERATIONS :=1000# no extra space added
 BENCH_ITERATIONS :=1000
- # For now, we skip the "go" (for simplicty). If an external program imports it, they'll provide full path
-GOMODULENAME := "github.com/muzammilar/geometric-shapes"
+# Parent Directory
+PARENT_PATH:=$(abspath ..)
 
-SERVER_VERSION := ${DEFAULT_VERSION}
-CLIENT_VERSION := ${DEFAULT_VERSION}
+## Builds
+DATASERVER:=${GO_DATASERVER}
+GEOMSERVER:=${GO_GEOMSERVER}
+CLIENT:=${GO_CLIENT}
 
 .PHONY: all clean test lint gomodule clean_gomodule gomodinit gomodtidy goget
 
-all: clean gomodtidy test
+all: clean gomodtidy test ${DATASERVER} ${GEOMSERVER} ${CLIENT}
+
+${DATASERVER}:
+	go build -ldflags "-X main.version=${SERVER_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${DATASERVER} ./cmd/dataserver/dataserver.go
+
+${GEOMSERVER}:
+	go build -ldflags "-X main.version=${SERVER_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${GEOMSERVER} ./cmd/geomserver/geomserver.go
+
+${CLIENT}:
+	go build -ldflags "-X main.version=${CLIENT_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${CLIENT} ./cmd/client/client.go
+
 
 clean:
 	echo "Nothing to clean in ${PWD}"
