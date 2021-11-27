@@ -11,12 +11,12 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 /*
@@ -49,6 +49,7 @@ func (g *GeometryServer) ComputeRectangleArea(ctx context.Context, r *shape.Rect
 	m.Value = float64(r.Length * r.Width)
 	return m, nil
 }
+
 func (g *GeometryServer) ListRectangleCoordinates(r *shape.Rectangle, stream shapecalc.Geometry_ListRectangleCoordinatesServer) error {
 	// validate data
 	if err := validateRectangleDimensions(r); err != nil {
@@ -80,11 +81,43 @@ func (g *GeometryServer) ListRectangleCoordinates(r *shape.Rectangle, stream sha
  * Functions - Geometry Service Server
  */
 
-func (g *GeometryServer) GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRectangleInfo not implemented")
+func (g *GeometryServer) RectangleInfo(ctx context.Context, r *shape.Rectangle) (*shape.ShapeInfo, error) {
+	// validate data
+	if err := validateRectangleDimensions(r); err != nil {
+		return nil, err
+	}
+	// compute info
+	area, err := g.ComputeRectangleArea(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+	perimeter, err := g.ComputeRectanglePerimeter(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+	measurements := make([]*shape.ShapeInfo_Mesurement, 3)
+	measurements = append(measurements, area)
+	measurements = append(measurements, perimeter)
+
+	return &shape.ShapeInfo{
+		Id:          r.Id,
+		Shape:       shape.ShapeInfo_RECTANGLE,
+		Mesurements: measurements,
+		Timestamp:   timestamppb.New(time.Now()),
+	}, nil
+
 }
-func (g *GeometryServer) GetCuboidInfo(context.Context, *shape.Cuboid) (*shape.ShapeInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCuboidInfo not implemented")
+
+func (g *GeometryServer) ComputeRectanglePerimeter(ctx context.Context, r *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error) {
+	// validate data
+	if err := validateRectangleDimensions(r); err != nil {
+		return nil, err
+	}
+	// compute area
+	var m = new(shape.ShapeInfo_Mesurement)
+	m.Name = shape.ShapeInfo_PERIMETER
+	m.Value = 2 * float64(r.Length+r.Width)
+	return m, nil
 }
 
 /*
@@ -99,6 +132,20 @@ func validateRectangleDimensions(r *shape.Rectangle) error {
 	}
 	if r.Width < 0 {
 		return fmt.Errorf("The width field can not be negative: %#v", r.Width)
+	}
+	return nil
+}
+
+// validateCuboidDimensions makes sure that the dimensions of a cuboid are positive only
+func validateCuboidDimensions(c *shape.Cuboid) error {
+	if c.Length < 0 {
+		return fmt.Errorf("The length field can not be negative: %#v", c.Length)
+	}
+	if c.Width < 0 {
+		return fmt.Errorf("The width field can not be negative: %#v", c.Width)
+	}
+	if c.Height < 0 {
+		return fmt.Errorf("The height field can not be negative: %#v", c.Width)
 	}
 	return nil
 }

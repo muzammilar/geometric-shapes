@@ -194,8 +194,7 @@ var Geometry_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InfoClient interface {
 	// A simple RPC.
-	GetRectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
-	GetCuboidInfo(ctx context.Context, in *shape.Cuboid, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
+	RectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
 }
 
 type infoClient struct {
@@ -206,18 +205,9 @@ func NewInfoClient(cc grpc.ClientConnInterface) InfoClient {
 	return &infoClient{cc}
 }
 
-func (c *infoClient) GetRectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error) {
+func (c *infoClient) RectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error) {
 	out := new(shape.ShapeInfo)
-	err := c.cc.Invoke(ctx, "/shapecalc.Info/GetRectangleInfo", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *infoClient) GetCuboidInfo(ctx context.Context, in *shape.Cuboid, opts ...grpc.CallOption) (*shape.ShapeInfo, error) {
-	out := new(shape.ShapeInfo)
-	err := c.cc.Invoke(ctx, "/shapecalc.Info/GetCuboidInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/shapecalc.Info/RectangleInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -229,8 +219,7 @@ func (c *infoClient) GetCuboidInfo(ctx context.Context, in *shape.Cuboid, opts .
 // for forward compatibility
 type InfoServer interface {
 	// A simple RPC.
-	GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error)
-	GetCuboidInfo(context.Context, *shape.Cuboid) (*shape.ShapeInfo, error)
+	RectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error)
 	mustEmbedUnimplementedInfoServer()
 }
 
@@ -238,11 +227,8 @@ type InfoServer interface {
 type UnimplementedInfoServer struct {
 }
 
-func (UnimplementedInfoServer) GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRectangleInfo not implemented")
-}
-func (UnimplementedInfoServer) GetCuboidInfo(context.Context, *shape.Cuboid) (*shape.ShapeInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetCuboidInfo not implemented")
+func (UnimplementedInfoServer) RectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RectangleInfo not implemented")
 }
 func (UnimplementedInfoServer) mustEmbedUnimplementedInfoServer() {}
 
@@ -257,38 +243,20 @@ func RegisterInfoServer(s grpc.ServiceRegistrar, srv InfoServer) {
 	s.RegisterService(&Info_ServiceDesc, srv)
 }
 
-func _Info_GetRectangleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Info_RectangleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(shape.Rectangle)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InfoServer).GetRectangleInfo(ctx, in)
+		return srv.(InfoServer).RectangleInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/shapecalc.Info/GetRectangleInfo",
+		FullMethod: "/shapecalc.Info/RectangleInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfoServer).GetRectangleInfo(ctx, req.(*shape.Rectangle))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Info_GetCuboidInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(shape.Cuboid)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(InfoServer).GetCuboidInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/shapecalc.Info/GetCuboidInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InfoServer).GetCuboidInfo(ctx, req.(*shape.Cuboid))
+		return srv.(InfoServer).RectangleInfo(ctx, req.(*shape.Rectangle))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -301,12 +269,8 @@ var Info_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*InfoServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetRectangleInfo",
-			Handler:    _Info_GetRectangleInfo_Handler,
-		},
-		{
-			MethodName: "GetCuboidInfo",
-			Handler:    _Info_GetCuboidInfo_Handler,
+			MethodName: "RectangleInfo",
+			Handler:    _Info_RectangleInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

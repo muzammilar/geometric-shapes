@@ -30,8 +30,5 @@ service Geometry {
 // Interface exported by the server.
 service Info {
     // A simple RPC.
-    rpc GetRectangleInfo(shape.Rectangle) returns (shape.ShapeInfo) {}
-
-    rpc GetCuboidInfo(shape.Cuboid) returns (shape.ShapeInfo) {}
-
+    rpc RectangleInfo(shape.Rectangle) returns (shape.ShapeInfo) {}
 }
