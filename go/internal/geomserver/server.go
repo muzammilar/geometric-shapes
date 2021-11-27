@@ -46,13 +46,17 @@ func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, k
 	// register the shutdown handler
 	go func() {
 		<-ctx.Done() // blocking wait
+		logger.Infof("Initiating gRPC Server of shutdown; %#v", serverRegistrar)
 		grpcserver.ShutDownServerWithTimeout(serverRegistrar, 20*time.Second)
 	}()
 
-	// start the registrar server/registrar
+	// start the registrar server/registrar (blocking)
 	if err := serverRegistrar.Serve(listener); err != nil {
-		// TODO: log error
+		logger.Errorf("gRPC Server '%T' failed to serve on the listener with err: %s", serverRegistrar, err)
 	}
+	// server is shutdown
+	logger.Errorf("gRPC Server has shutdown: %s", serverRegistrar)
+
 }
 
 /*

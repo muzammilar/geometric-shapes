@@ -32,6 +32,8 @@ func Serve(wg *sync.WaitGroup, addr string, ctx context.Context, logger *logrus.
 		defer wg.Done()
 	}
 
+	logger.Debugf("Setting up a ServeMux for HTTP Server for address: %s", addr)
+
 	// create a new HTTP Mux handler
 	mux := http.NewServeMux()
 
@@ -59,11 +61,15 @@ func Serve(wg *sync.WaitGroup, addr string, ctx context.Context, logger *logrus.
 		}
 	}()
 
+	logger.Infof("Starting HTTP Server: %#v", server)
+
 	// start the http server and ignore 'server closed' errors
 	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		logger.Warnf("HTTP Server failed to listen and serve: %#v", err)
 	}
 	// server shutdown is complete
+	logger.Infof("HTTP Server has shutdown: %#v", server)
+
 }
 
 /*

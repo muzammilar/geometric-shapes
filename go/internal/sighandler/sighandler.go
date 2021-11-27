@@ -23,6 +23,7 @@ func SignalHandler(cancel context.CancelFunc, logger *logrus.Logger) int {
 
 	// list of signals to handle
 	signals := []os.Signal{syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM}
+	logger.Info("Starting Signal Handler for the signals: ", signals)
 
 	// a channel that is used to notify that an exit signal is recieved
 	exitChan := make(chan int)
