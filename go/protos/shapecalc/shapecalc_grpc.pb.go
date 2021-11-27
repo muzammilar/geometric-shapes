@@ -25,8 +25,7 @@ type GeometryClient interface {
 	//
 	// A mesurement with an empty name is returned if there's no field at the given
 	// position.
-	ComputeArea(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo_Mesurement, error)
-	GetRectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
+	ComputeRectangleArea(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo_Mesurement, error)
 	// A server-to-client streaming RPC.
 	//
 	// Obtains all the Planar Coordinate (dimensions) available within the given Rectangle.  Results are
@@ -44,18 +43,9 @@ func NewGeometryClient(cc grpc.ClientConnInterface) GeometryClient {
 	return &geometryClient{cc}
 }
 
-func (c *geometryClient) ComputeArea(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo_Mesurement, error) {
+func (c *geometryClient) ComputeRectangleArea(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo_Mesurement, error) {
 	out := new(shape.ShapeInfo_Mesurement)
-	err := c.cc.Invoke(ctx, "/shapecalc.Geometry/ComputeArea", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *geometryClient) GetRectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error) {
-	out := new(shape.ShapeInfo)
-	err := c.cc.Invoke(ctx, "/shapecalc.Geometry/GetRectangleInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/shapecalc.Geometry/ComputeRectangleArea", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -104,8 +94,7 @@ type GeometryServer interface {
 	//
 	// A mesurement with an empty name is returned if there's no field at the given
 	// position.
-	ComputeArea(context.Context, *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error)
-	GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error)
+	ComputeRectangleArea(context.Context, *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error)
 	// A server-to-client streaming RPC.
 	//
 	// Obtains all the Planar Coordinate (dimensions) available within the given Rectangle.  Results are
@@ -120,11 +109,8 @@ type GeometryServer interface {
 type UnimplementedGeometryServer struct {
 }
 
-func (UnimplementedGeometryServer) ComputeArea(context.Context, *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ComputeArea not implemented")
-}
-func (UnimplementedGeometryServer) GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetRectangleInfo not implemented")
+func (UnimplementedGeometryServer) ComputeRectangleArea(context.Context, *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ComputeRectangleArea not implemented")
 }
 func (UnimplementedGeometryServer) ListRectangleCoordinates(*shape.Rectangle, Geometry_ListRectangleCoordinatesServer) error {
 	return status.Errorf(codes.Unimplemented, "method ListRectangleCoordinates not implemented")
@@ -142,38 +128,20 @@ func RegisterGeometryServer(s grpc.ServiceRegistrar, srv GeometryServer) {
 	s.RegisterService(&Geometry_ServiceDesc, srv)
 }
 
-func _Geometry_ComputeArea_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Geometry_ComputeRectangleArea_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(shape.Rectangle)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(GeometryServer).ComputeArea(ctx, in)
+		return srv.(GeometryServer).ComputeRectangleArea(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/shapecalc.Geometry/ComputeArea",
+		FullMethod: "/shapecalc.Geometry/ComputeRectangleArea",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeometryServer).ComputeArea(ctx, req.(*shape.Rectangle))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Geometry_GetRectangleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(shape.Rectangle)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(GeometryServer).GetRectangleInfo(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/shapecalc.Geometry/GetRectangleInfo",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GeometryServer).GetRectangleInfo(ctx, req.(*shape.Rectangle))
+		return srv.(GeometryServer).ComputeRectangleArea(ctx, req.(*shape.Rectangle))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -207,12 +175,8 @@ var Geometry_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*GeometryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ComputeArea",
-			Handler:    _Geometry_ComputeArea_Handler,
-		},
-		{
-			MethodName: "GetRectangleInfo",
-			Handler:    _Geometry_GetRectangleInfo_Handler,
+			MethodName: "ComputeRectangleArea",
+			Handler:    _Geometry_ComputeRectangleArea_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
@@ -222,5 +186,129 @@ var Geometry_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
+	Metadata: "shapecalc.proto",
+}
+
+// InfoClient is the client API for Info service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type InfoClient interface {
+	// A simple RPC.
+	GetRectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
+	GetCuboidInfo(ctx context.Context, in *shape.Cuboid, opts ...grpc.CallOption) (*shape.ShapeInfo, error)
+}
+
+type infoClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewInfoClient(cc grpc.ClientConnInterface) InfoClient {
+	return &infoClient{cc}
+}
+
+func (c *infoClient) GetRectangleInfo(ctx context.Context, in *shape.Rectangle, opts ...grpc.CallOption) (*shape.ShapeInfo, error) {
+	out := new(shape.ShapeInfo)
+	err := c.cc.Invoke(ctx, "/shapecalc.Info/GetRectangleInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *infoClient) GetCuboidInfo(ctx context.Context, in *shape.Cuboid, opts ...grpc.CallOption) (*shape.ShapeInfo, error) {
+	out := new(shape.ShapeInfo)
+	err := c.cc.Invoke(ctx, "/shapecalc.Info/GetCuboidInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// InfoServer is the server API for Info service.
+// All implementations must embed UnimplementedInfoServer
+// for forward compatibility
+type InfoServer interface {
+	// A simple RPC.
+	GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error)
+	GetCuboidInfo(context.Context, *shape.Cuboid) (*shape.ShapeInfo, error)
+	mustEmbedUnimplementedInfoServer()
+}
+
+// UnimplementedInfoServer must be embedded to have forward compatible implementations.
+type UnimplementedInfoServer struct {
+}
+
+func (UnimplementedInfoServer) GetRectangleInfo(context.Context, *shape.Rectangle) (*shape.ShapeInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRectangleInfo not implemented")
+}
+func (UnimplementedInfoServer) GetCuboidInfo(context.Context, *shape.Cuboid) (*shape.ShapeInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCuboidInfo not implemented")
+}
+func (UnimplementedInfoServer) mustEmbedUnimplementedInfoServer() {}
+
+// UnsafeInfoServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to InfoServer will
+// result in compilation errors.
+type UnsafeInfoServer interface {
+	mustEmbedUnimplementedInfoServer()
+}
+
+func RegisterInfoServer(s grpc.ServiceRegistrar, srv InfoServer) {
+	s.RegisterService(&Info_ServiceDesc, srv)
+}
+
+func _Info_GetRectangleInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(shape.Rectangle)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServer).GetRectangleInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shapecalc.Info/GetRectangleInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServer).GetRectangleInfo(ctx, req.(*shape.Rectangle))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Info_GetCuboidInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(shape.Cuboid)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InfoServer).GetCuboidInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/shapecalc.Info/GetCuboidInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InfoServer).GetCuboidInfo(ctx, req.(*shape.Cuboid))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Info_ServiceDesc is the grpc.ServiceDesc for Info service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Info_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "shapecalc.Info",
+	HandlerType: (*InfoServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetRectangleInfo",
+			Handler:    _Info_GetRectangleInfo_Handler,
+		},
+		{
+			MethodName: "GetCuboidInfo",
+			Handler:    _Info_GetCuboidInfo_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
 	Metadata: "shapecalc.proto",
 }

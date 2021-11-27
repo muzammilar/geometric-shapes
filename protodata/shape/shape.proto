@@ -23,7 +23,7 @@ message ShapeInfo {
 
   message Mesurement {
     QuantityType name = 1;
-    float value = 2;
+    double value = 2;
   }
 
   Identifier id = 1;

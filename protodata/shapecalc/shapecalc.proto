@@ -15,8 +15,7 @@ service Geometry {
     //
     // A mesurement with an empty name is returned if there's no field at the given
     // position.
-    rpc ComputeArea(shape.Rectangle) returns (shape.ShapeInfo.Mesurement) {}
-    rpc GetRectangleInfo(shape.Rectangle) returns (shape.ShapeInfo) {}
+    rpc ComputeRectangleArea(shape.Rectangle) returns (shape.ShapeInfo.Mesurement) {}
 
     // A server-to-client streaming RPC.
     //
@@ -26,4 +25,13 @@ service Geometry {
     // huge number of features.
     rpc ListRectangleCoordinates(shape.Rectangle) returns (stream shape.PlanarCoordinates) {}
 
-  }
+}
+
+// Interface exported by the server.
+service Info {
+    // A simple RPC.
+    rpc GetRectangleInfo(shape.Rectangle) returns (shape.ShapeInfo) {}
+
+    rpc GetCuboidInfo(shape.Cuboid) returns (shape.ShapeInfo) {}
+
+}
