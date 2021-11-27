@@ -5,7 +5,7 @@
 package geomserver
 
 /*
- * HTTP Server Package
+ * Geometry Server Package
  */
 import (
 	"context"
@@ -26,6 +26,7 @@ import (
  */
 
 // GeometryServer implements two different services in the same server. This is allowed since the service names are unique
+// Generally it's best to have two different structs implement them, however, this is a POC for experimentation, so it's fine
 type GeometryServer struct {
 	// embed the Geometry Server
 	shapecalc.UnimplementedGeometryServer

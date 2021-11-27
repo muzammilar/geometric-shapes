@@ -61,7 +61,7 @@ func main() {
 
 	// start the geometry server
 	wg.Add(1)
-	go geomserver.Serve(wg, ctx, grpcPort, certFile, keyFile, logger)
+	go geomserver.Serve(wg, ctx, grpcPort, certFile, keyFile, version, logger)
 
 	// start the http server
 	wg.Add(1)

@@ -1,19 +1,20 @@
 /*
- * The package implements a basic examle of a geometry grpc server
+ * The package implements a basic examle of a couple of data grpc server
  */
 
-package geomserver
+package dataserver
 
 /*
- * Geometry Server Package
+ * Data Server Package
  */
+
 import (
 	"context"
 	"sync"
 	"time"
 
 	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
-	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
+	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,7 +22,7 @@ import (
  * Public Functions
  */
 
-// Serve creates a gRPC Geometry Server, and registers all the required endpoints. This function is blocking (and should run in a go routine).
+// Serve creates a gRPC Data Server, and registers all the required endpoints. This function is blocking (and should run in a go routine).
 func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, keyFile string, version string, logger *logrus.Logger) {
 
 	// if there's a wait group implemented, then notify about the thread finishing
@@ -32,20 +33,24 @@ func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, k
 	// create a grpc server
 	serverRegistrar := grpcserver.CreateServerWithStatsAndTLS(certFile, keyFile, logger)
 
-	// geometry handler Wait Group
-	var geomWg sync.WaitGroup
+	// store server Wait Group
+	var storeWg sync.WaitGroup
 
-	// create a handler for geometry server
-	geometryHandler := &GeometryServer{
-		logger:  logger,
-		wg:      &geomWg,
-		name:    "geometry",
-		version: version,
+	// create a handler for store service
+	storeHandler := &StoreServer{
+		logger: logger,
+		wg:     &storeWg,
 	}
 
-	// register the geometry handler with the server for both services
-	shapecalc.RegisterGeometryServer(serverRegistrar, geometryHandler)
-	shapecalc.RegisterInfoServer(serverRegistrar, geometryHandler)
+	// create a handler for generator service
+	generatorHandler := &GeneratorServer{
+		logger: logger,
+		wg:     &storeWg,
+	}
+
+	// register the handlers with the server
+	shapestore.RegisterGeneratorServer(serverRegistrar, generatorHandler)
+	shapestore.RegisterStoreServer(serverRegistrar, storeHandler)
 
 	// create a tcp listener
 	listener := grpcserver.TCPListener("", port)

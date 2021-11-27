@@ -9,6 +9,9 @@ import "shape/shape.proto";
 // imported from protobuf-dev
 import "google/protobuf/empty.proto";
 
+// Both `Store` and `Generator` services implement a `Cuboid` function, so it must be implemented by different servers
+
+// Storage service - store shapes as requested by the client
 service Store {
     // A client-to-server streaming RPC.
     //
@@ -24,6 +27,7 @@ service Store {
 
 }
 
+// Generator service - generate new shapes
 service Generator {
     // A server-to-client streaming RPC.
     //
