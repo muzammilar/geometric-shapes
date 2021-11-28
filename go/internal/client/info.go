@@ -8,9 +8,7 @@ package client
  * Client Package
  */
 import (
-	"fmt"
-
-	"github.com/muzammilar/geometric-shapes/protos/shapestore"
+	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
 	"google.golang.org/grpc"
 )
 
@@ -31,8 +29,11 @@ func InfoClient(c *ServiceClient) {
 
 	defer conn.Close()
 
-	storeClient := shapestore.NewStoreClient(conn)
+	// example mux
+	infoClient := shapecalc.NewInfoClient(conn)
+	geometryClient := shapecalc.NewGeometryClient(conn)
 
-	fmt.Println(storeClient, c.ctx)
+	c.logger.Infof("Info service client: %#v", infoClient)
+	c.logger.Infof("Geometry service client: %#v", geometryClient)
 
 }

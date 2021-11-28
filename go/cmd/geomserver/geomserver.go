@@ -32,6 +32,7 @@ func main() {
 	keyFilePtr := flag.String("keyfile", "/geometry/certs/server.grpc.key", "The path of the key file.")    // skip path validation
 	logPathPtr := flag.String("logpath", "/var/log/geomserver.log", "The path of the logs file.")           // skip path validation
 	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                  // skip path validation
+	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                   // skip path validation
 	flag.IntVar(&grpcPort, "port", 8120, "The port for the gRPC data application.")                         // skip validation
 
 	//parse flags
@@ -42,6 +43,7 @@ func main() {
 	keyFile := *keyFilePtr
 	logPath := *logPathPtr
 	logLevel := *logLevelPtr
+	logStdOut := *logStdOutPtr
 
 	// http addresses
 	httpAddr := net.JoinHostPort("", strconv.Itoa(*httpPortPtr))
@@ -50,7 +52,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// setup logger
-	c := logs.NewConfiguration("", logLevel, logPath)
+	c := logs.NewConfiguration("", logLevel, logPath, logStdOut)
 	logger, err := logs.InitLoggerWithFileOutput(c)
 	if err != nil {
 		panic(err)

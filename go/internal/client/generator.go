@@ -31,7 +31,12 @@ func GeneratorClient(c *ServiceClient) {
 
 	defer conn.Close()
 
+	// example mux
 	storeClient := shapestore.NewStoreClient(conn)
+	generatorClient := shapestore.NewGeneratorClient(conn)
+
+	c.logger.Infof("Store service client: %#v", storeClient)
+	c.logger.Infof("Generator service client: %#v", generatorClient)
 
 	fmt.Println(storeClient, c.ctx)
 }

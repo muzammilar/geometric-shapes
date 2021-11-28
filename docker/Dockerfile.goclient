@@ -10,4 +10,4 @@ RUN apk --no-cache add ca-certificates
 #COPY --from=geometry/base:${TAG} /geometry/certs/*.crt /geometry/certs/
 COPY ./build/goclient /geometry/goclient
 COPY ./certs/*.crt /geometry/certs/
-ENTRYPOINT /geometry/goclient
+ENTRYPOINT ["/geometry/goclient", "-logstdout", "true"]

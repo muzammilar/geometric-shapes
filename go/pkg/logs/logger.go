@@ -5,6 +5,7 @@ package logs
 
 import (
 	"fmt"
+	"io"
 	"io/fs"
 	"os"
 
@@ -22,7 +23,7 @@ func GetLogger() *logrus.Logger {
 	}
 
 	// create the logger if it doesn't exist (panic on error)
-	c := NewConfiguration(defaultLoggerName, "", "")
+	c := NewConfiguration(defaultLoggerName, "", "", false)
 	logger, err := InitLoggerWithFileOutput(c)
 	if err != nil {
 		panic(fmt.Errorf("Unable to initialize logger while trying to get the logger: %+v", err))
@@ -58,7 +59,14 @@ func InitLoggerWithFileOutput(c *Configuration) (*logrus.Logger, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.SetOutput(fileout)
+	// check for console logging
+	if c.ConsoleLogging {
+		mw := io.MultiWriter(os.Stdout, fileout)
+		logrus.SetOutput(mw)
+
+	} else {
+		logger.SetOutput(fileout)
+	}
 
 	// set logging level
 	level, err := logrus.ParseLevel(c.Level)

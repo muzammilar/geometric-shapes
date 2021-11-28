@@ -11,4 +11,4 @@ RUN apk --no-cache add ca-certificates
 #COPY --from=geometry/base:${TAG} /geometry/certs /geometry/certs
 COPY ./build/dataserver /geometry/dataserver
 COPY ./certs /geometry/certs
-ENTRYPOINT /geometry/dataserver
+ENTRYPOINT ["/geometry/dataserver", "-logstdout", "true"]

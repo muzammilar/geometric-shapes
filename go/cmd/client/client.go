@@ -9,7 +9,6 @@ import (
 	"sync"
 
 	"github.com/muzammilar/geometric-shapes/internal/client"
-	"github.com/muzammilar/geometric-shapes/internal/sighandler"
 	"github.com/muzammilar/geometric-shapes/pkg/logs"
 	"google.golang.org/grpc/credentials"
 )
@@ -27,6 +26,7 @@ func main() {
 	certFilePtr := flag.String("certfile", "/geometry/certs/server.grpc.crt", "The path of the cert file.")                      // skip path validation
 	logPathPtr := flag.String("logpath", "/var/log/goclient.log", "The path of the logs file.")                                  // skip path validation
 	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                                       // skip path validation
+	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                                        // skip path validation
 
 	//parse flags
 	flag.Parse()
@@ -37,12 +37,14 @@ func main() {
 	certFile := *certFilePtr
 	logPath := *logPathPtr
 	logLevel := *logLevelPtr
+	logStdOut := *logStdOutPtr
 
 	// context - the cancel function is called by the sighandler
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// setup logger
-	c := logs.NewConfiguration("", logLevel, logPath)
+	c := logs.NewConfiguration("", logLevel, logPath, logStdOut)
 	logger, err := logs.InitLoggerWithFileOutput(c)
 	if err != nil {
 		panic(err)
@@ -87,7 +89,7 @@ func main() {
 	go client.StoreClient(dataClient)
 
 	//SignalHandler (blocking operation)
-	sighandler.SignalHandler(cancel, logger)
+	//sighandler.SignalHandler(cancel, logger)
 
 	// Wait for all services to cleanly shutdown
 	wg.Wait()
