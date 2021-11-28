@@ -65,7 +65,7 @@ func generatorCuboid(g shapestore.GeneratorClient, c *ServiceClient) {
 	serverStream, err := g.Cuboid(ctxGen, &emptypb.Empty{})
 	if err != nil {
 		errStatus, _ := status.FromError(err)
-		c.logger.Errorf("Error setting up server stream for Generator service's Cuboid function: %s. \nMessage: %s", err.Error(), errStatus.Message())
+		c.logger.Errorf("Error setting up server stream for Generator/Cuboid: %s. \nMessage: %s", err.Error(), errStatus.Message())
 		return
 	}
 
@@ -77,7 +77,7 @@ func generatorCuboid(g shapestore.GeneratorClient, c *ServiceClient) {
 			continue
 		}
 		// log data
-		c.logger.Info(cuboid)
+		c.logger.Infof("Received data from Generator/Cuboid: %s", cuboid)
 		// keep recv count
 		recvCount++
 		if recvCount >= numMessagesMax {
@@ -90,5 +90,5 @@ func generatorCuboid(g shapestore.GeneratorClient, c *ServiceClient) {
 		return
 	}
 	// Log Error
-	c.logger.Errorf("Error occured during streaming of Generator service's Cuboid function:%s", err.Error())
+	c.logger.Errorf("Error occured during streaming of Generator/Cuboid:%s", err.Error())
 }
