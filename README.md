@@ -1,5 +1,5 @@
 # geometric-shapes
-An example of gRPC Servers and multi-lingual clients. A basic golang gRPC example with server certificates (in development) and metrics (in development).
+An example of gRPC Servers and multi-lingual clients. A basic golang gRPC example with server certificates (in development) and metrics.
 
 ```sh
 ## Step 1: (Can be skipped) (one time)
