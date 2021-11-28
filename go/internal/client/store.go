@@ -39,8 +39,8 @@ func StoreClient(c *ServiceClient) {
 	storeClient := shapestore.NewStoreClient(conn)
 	c.logger.Infof("Store service client: %#v", storeClient)
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 
 		wg.Done()
 	}()

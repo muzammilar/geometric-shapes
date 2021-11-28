@@ -36,8 +36,8 @@ func GeometryClient(c *ServiceClient) {
 
 	// setup a service client
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 
 		wg.Done()
 	}()

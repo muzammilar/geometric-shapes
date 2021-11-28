@@ -42,8 +42,8 @@ func InfoClient(c *ServiceClient) {
 	c.logger.Infof("Info service client: %#v", infoClient)
 	c.logger.Infof("Geometry service client: %#v", geometryClient)
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 
 		wg.Done()
 	}()

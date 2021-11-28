@@ -7,7 +7,7 @@ GODIR=go
 
 .PHONY: all clean certs clean_certs protos clean_protos test lint gomodule gomodinit go
 
-all: clean protos go ${GO_DATASERVER} ${GO_GEOMSERVER} ${GO_GOCLIENT}
+all: clean protos go
 
 clean:
 	-rm -f ${BUILD_DIR}/${GO_DATASERVER}
@@ -29,7 +29,7 @@ test lint:
 	$(MAKE) $@ -C ${GODIR}
 
 # go specific commands
-gomodule gomodinit ${GO_DATASERVER} ${GO_GEOMSERVER} ${GO_GOCLIENT}:
+gomodule gomodinit ${GO_DATASERVER} ${GO_GEOMSERVER} ${GO_CLIENT}:
 	$(MAKE) $@ -C ${GODIR}
 
 clean_certs:

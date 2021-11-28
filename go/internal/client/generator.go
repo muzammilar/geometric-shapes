@@ -15,6 +15,7 @@ import (
 	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -46,8 +47,8 @@ func GeneratorClient(c *ServiceClient) {
 	c.logger.Infof("Store service client: %#v", storeClient)
 	c.logger.Infof("Generator service client: %#v", generatorClient)
 
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
 		generatorCuboid(generatorClient, c)
 		wg.Done()
 	}()
@@ -63,7 +64,8 @@ func generatorCuboid(g shapestore.GeneratorClient, c *ServiceClient) {
 	defer cancelGen()
 	serverStream, err := g.Cuboid(ctxGen, &emptypb.Empty{})
 	if err != nil {
-		c.logger.Errorf("Error setting up server stream for Generator service's Cuboid function: %s", err.Error())
+		errStatus, _ := status.FromError(err)
+		c.logger.Errorf("Error setting up server stream for Generator service's Cuboid function: %s. \nMessage: %s", err.Error(), errStatus.Message())
 		return
 	}
 
@@ -87,4 +89,6 @@ func generatorCuboid(g shapestore.GeneratorClient, c *ServiceClient) {
 	if err == io.EOF || err == nil {
 		return
 	}
+	// Log Error
+	c.logger.Errorf("Error occured during streaming of Generator service's Cuboid function:%s", err.Error())
 }
