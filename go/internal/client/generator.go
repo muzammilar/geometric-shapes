@@ -43,6 +43,7 @@ func GeneratorClient(c *ServiceClient) {
 	// setup a service client
 	storeClient := shapestore.NewStoreClient(conn)
 	generatorClient := shapestore.NewGeneratorClient(conn)
+	generatorSecClient := shapestore.NewGeneratorClient(conn)
 
 	c.logger.Infof("Store service client: %#v", storeClient)
 	c.logger.Infof("Generator service client: %#v", generatorClient)
@@ -50,6 +51,12 @@ func GeneratorClient(c *ServiceClient) {
 	wg.Add(1)
 	go func() {
 		generatorCuboid(generatorClient, c)
+		wg.Done()
+	}()
+
+	wg.Add(1)
+	go func() {
+		generatorCuboid(generatorSecClient, c)
 		wg.Done()
 	}()
 
