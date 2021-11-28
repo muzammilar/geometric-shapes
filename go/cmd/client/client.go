@@ -21,12 +21,12 @@ var (
 func main() {
 
 	// flags
-	geomAddrPtr := flag.String("geomserver", "geomserver.grpc:8120", "The gRPC endpoint for connecting to the geometry server.") // skip validation
-	dataAddrPtr := flag.String("dataserver", "dataserver.grpc:8120", "The gRPC endpoint for connecting to the geometry server.") // skip validation
-	certFilePtr := flag.String("certfile", "/geometry/certs/server.grpc.crt", "The path of the cert file.")                      // skip path validation
-	logPathPtr := flag.String("logpath", "/var/log/goclient.log", "The path of the logs file.")                                  // skip path validation
-	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                                       // skip path validation
-	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                                        // skip path validation
+	geomAddrPtr := flag.String("geomserver", "geomserver.geometry:8120", "The gRPC endpoint for connecting to the geometry server.") // skip validation
+	dataAddrPtr := flag.String("dataserver", "dataserver.geometry:8120", "The gRPC endpoint for connecting to the geometry server.") // skip validation
+	certFilePtr := flag.String("certfile", "/geometry/certs/server.grpc.crt", "The path of the cert file.")                          // skip path validation
+	logPathPtr := flag.String("logpath", "/var/log/goclient.log", "The path of the logs file.")                                      // skip path validation
+	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                                           // skip path validation
+	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                                            // skip path validation
 
 	//parse flags
 	flag.Parse()
@@ -85,8 +85,8 @@ func main() {
 	go client.GeneratorClient(dataClient)
 
 	// start shapestore - store client
-	//wg.Add(1)
-	//go client.StoreClient(dataClient)
+	wg.Add(1)
+	go client.StoreClient(dataClient)
 
 	//SignalHandler (blocking operation)
 	//sighandler.SignalHandler(cancel, logger)

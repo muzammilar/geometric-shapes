@@ -43,4 +43,4 @@ certs: clean_certs
 # Generation of self-signed(x509) public key (PEM-encodings .pem|.crt) based on the private (.key)
 	openssl req -new -x509 -sha256 \
 	-key certs/server.grpc.key -out certs/server.grpc.crt -days 3650 \
-	-subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=server.grpc"
+	-subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=*.geometry"
