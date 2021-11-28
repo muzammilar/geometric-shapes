@@ -30,7 +30,11 @@ docker-compose run --rm  basebuilder make certs
 # Note: This will start the protobuilder and basebuilder containers as well.
 docker-compose up --build --detach
 
-# Shutdown everything (and remove volumes)
+## Step 5:
+# Shutdown everything (and remove networks and local images). Networks are removed in this.
+docker-compose down --volumes
+# Use `docker-compose down --rmi all --volumes` with above to images as well
+# Remove everything (and remove volumes). Networks are not removed here.
 docker-compose rm --force --stop -v
 ```
 
