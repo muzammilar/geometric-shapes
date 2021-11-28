@@ -8,13 +8,10 @@ package client
  * Client Package
  */
 import (
-	"context"
 	"fmt"
-	"sync"
 
 	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 )
 
 /*
@@ -22,12 +19,12 @@ import (
  */
 
 // Create an Info Service client and perform the functions required
-func InfoClient(wg *sync.WaitGroup, addr string, creds credentials.TransportCredentials, ctx context.Context) {
+func InfoClient(c *ServiceClient) {
 
 	// notify the wait group when client finishes
-	defer wg.Done()
+	defer c.wg.Done()
 
-	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(creds))
+	conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(c.creds))
 	if err != nil {
 		panic(err)
 	}
@@ -36,5 +33,6 @@ func InfoClient(wg *sync.WaitGroup, addr string, creds credentials.TransportCred
 
 	storeClient := shapestore.NewStoreClient(conn)
 
-	fmt.Println(storeClient, ctx)
+	fmt.Println(storeClient, c.ctx)
+
 }

@@ -66,21 +66,25 @@ func main() {
 	// Create credentials
 	creds := credentials.NewClientTLSFromCert(rootCerts, "")
 
+	// clients
+	geomClient := client.NewServiceClient(wg, geomAddr, creds, logger, ctx)
+	dataClient := client.NewServiceClient(wg, dataAddr, creds, logger, ctx)
+
 	// start the shapecalc - geometry client
 	wg.Add(1)
-	go client.GeometryClient(wg, geomAddr, creds, ctx)
+	go client.GeometryClient(geomClient)
 
 	// start shapecalc - info client
 	wg.Add(1)
-	go client.InfoClient(wg, geomAddr, creds, ctx)
+	go client.InfoClient(geomClient)
 
 	// start the shapestore - generator client
 	wg.Add(1)
-	go client.GeneratorClient(wg, dataAddr, creds, ctx)
+	go client.GeneratorClient(dataClient)
 
 	// start shapestore - store client
 	wg.Add(1)
-	go client.StoreClient(wg, dataAddr, creds, ctx)
+	go client.StoreClient(dataClient)
 
 	//SignalHandler (blocking operation)
 	sighandler.SignalHandler(cancel, logger)
