@@ -47,7 +47,7 @@ services:
 
   # grpc server that generates the data
   dataserver:
-    hostname: datamserver.geometry
+    hostname: dataserver.geometry
     build:
       context: ./
       dockerfile: ./docker/Dockerfile.dataserver

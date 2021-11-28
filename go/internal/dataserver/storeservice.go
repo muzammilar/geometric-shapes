@@ -12,6 +12,7 @@ import (
 	"io"
 	"sync"
 
+	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
 	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"github.com/sirupsen/logrus"
@@ -28,7 +29,7 @@ type StoreServer struct {
 	shapestore.UnimplementedStoreServer
 	// Other internal use variables
 	logger   *logrus.Logger  // a shared logger (can be a bottleneck)
-	wg       *sync.WaitGroup // a wait group to track all the request
+	wg       *sync.WaitGroup // a wait group - since the server's serve is blocking (and shutdown closes all workers), a wait group is not needed
 	chCuboid chan<- *shape.Cuboid
 }
 
@@ -37,6 +38,10 @@ type StoreServer struct {
  */
 
 func (s *StoreServer) Cuboid(stream shapestore.Store_CuboidServer) error {
+	// get client information
+	clientAddr := grpcserver.GetRemoteHostFromContext(stream.Context())
+	errTemplate := "Error occured while streaming StoreServer/Cuboid from '%s': %s"
+
 	// sample non-blocking server
 	nonBlockingCh := make(chan *shape.Cuboid)
 	defer close(nonBlockingCh)
@@ -65,12 +70,17 @@ func (s *StoreServer) Cuboid(stream shapestore.Store_CuboidServer) error {
 
 	// make sure error is handled
 	if err != nil {
+		s.logger.Infof(errTemplate, clientAddr, err.Error())
 		return err
 	}
 	return nil
 }
 
 func (s *StoreServer) Replay(stream shapestore.Store_ReplayServer) error {
+
+	// get client information
+	clientAddr := grpcserver.GetRemoteHostFromContext(stream.Context())
+	errTemplate := "Error occured during streaming StoreServer/Replay with '%s'. Direction:%s. Error: %s"
 
 	// using a channel and avoiding a wait group
 	errCh := make(chan error, 2)
@@ -89,7 +99,9 @@ func (s *StoreServer) Replay(stream shapestore.Store_ReplayServer) error {
 			}
 			// error handling
 			if err != nil {
-				errCh <- fmt.Errorf("Failed to receive shape info: %v", err)
+				e := fmt.Errorf(errTemplate, clientAddr, "Recv", err.Error())
+				s.logger.Infof(e.Error())
+				errCh <- e
 			}
 			// got some data!
 			select {
@@ -109,7 +121,8 @@ func (s *StoreServer) Replay(stream shapestore.Store_ReplayServer) error {
 		for data := range dataCh {
 			if err = stream.Send(data); err != nil {
 				// close the data channel (probably not a good idea to do it here)
-				errCh <- fmt.Errorf("Failed to send shape info: %v", err)
+				e := fmt.Errorf(errTemplate, clientAddr, "Send", err.Error())
+				s.logger.Infof(e.Error())
 				close(dataCh)
 				break
 			}

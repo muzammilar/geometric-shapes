@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/muzammilar/geometric-shapes/pkg/geomgenerator"
+	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
 	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc/peer"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -31,7 +31,7 @@ type GeneratorServer struct {
 	shapestore.UnimplementedGeneratorServer
 	// Other internal use variables
 	logger *logrus.Logger  // a shared logger (can be a bottleneck)
-	wg     *sync.WaitGroup // a wait group to track all the request
+	wg     *sync.WaitGroup // a wait group - since the server's serve is blocking (and shutdown closes all workers), a wait group is not needed
 }
 
 /*
@@ -40,9 +40,10 @@ type GeneratorServer struct {
 
 func (g *GeneratorServer) Cuboid(e *emptypb.Empty, stream shapestore.Generator_CuboidServer) error {
 
-	if remotePeer, ok := peer.FromContext(stream.Context()); ok {
-		g.logger.Debugf("Recieved a connection from '%s' for '%T'", remotePeer.Addr.String(), stream)
-	}
+	// get client information
+	clientAddr := grpcserver.GetRemoteHostFromContext(stream.Context())
+	errTemplate := "Error occured while streaming GeneratorServer/Cuboid to '%s': %s"
+	g.logger.Debugf("Recieved a connection from '%s' for '%T'", clientAddr, stream)
 
 cuboidLoop:
 	for {
@@ -56,6 +57,7 @@ cuboidLoop:
 		// send data to the stream
 		c := geomgenerator.Cuboid()
 		if err := stream.Send(c); err != nil {
+			g.logger.Infof(errTemplate, clientAddr, err.Error())
 			return err
 		}
 

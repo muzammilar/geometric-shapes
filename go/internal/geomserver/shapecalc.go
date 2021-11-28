@@ -13,6 +13,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
 	"github.com/muzammilar/geometric-shapes/protos/serviceinfo"
 	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
@@ -34,7 +35,7 @@ type GeometryServer struct {
 	shapecalc.UnimplementedInfoServer
 	// Other internal use variables
 	logger *logrus.Logger  // a shared logger (can be a bottleneck)
-	wg     *sync.WaitGroup // a wait group to track all the request
+	wg     *sync.WaitGroup // a wait group - since the server's serve is blocking (and shutdown closes all workers), a wait group is not needed
 	// server information
 	name    string // name of the server
 	version string // version of the server
@@ -64,8 +65,13 @@ func (g *GeometryServer) Version(ctx context.Context, e *emptypb.Empty) (*servic
  */
 
 func (g *GeometryServer) ComputeRectangleArea(ctx context.Context, r *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error) {
+	// get client information
+	clientAddr := grpcserver.GetRemoteHostFromContext(ctx)
+	errTemplate := "Error occured while computing GeometryServer/ComputeRectangleArea to '%s': %s"
+
 	// validate data
 	if err := validateRectangleDimensions(r); err != nil {
+		g.logger.Debugf(errTemplate, clientAddr, err.Error())
 		return nil, err
 	}
 	// compute area
@@ -76,8 +82,13 @@ func (g *GeometryServer) ComputeRectangleArea(ctx context.Context, r *shape.Rect
 }
 
 func (g *GeometryServer) ListRectangleCoordinates(r *shape.Rectangle, stream shapecalc.Geometry_ListRectangleCoordinatesServer) error {
+	// get client information
+	clientAddr := grpcserver.GetRemoteHostFromContext(stream.Context())
+	errTemplate := "Error occured while streaming GeometryServer/ListRectangleCoordinates to '%s': %s"
+
 	// validate data
 	if err := validateRectangleDimensions(r); err != nil {
+		g.logger.Debugf(errTemplate, clientAddr, err.Error())
 		return err
 	}
 	// list coordinates (all points on the rectangle)
@@ -94,6 +105,7 @@ func (g *GeometryServer) ListRectangleCoordinates(r *shape.Rectangle, stream sha
 			}
 			// send and check for errors
 			if err := stream.Send(pc); err != nil {
+				g.logger.Infof(errTemplate, clientAddr, err.Error())
 				return err
 			}
 		}
@@ -107,30 +119,38 @@ func (g *GeometryServer) ListRectangleCoordinates(r *shape.Rectangle, stream sha
  */
 
 func (g *GeometryServer) RectangleInfo(ctx context.Context, r *shape.Rectangle) (*shape.ShapeInfo, error) {
+	// get client information
+	clientAddr := grpcserver.GetRemoteHostFromContext(ctx)
+	errTemplate := "Error occured while computing GeometryServer/RectangleInfo to '%s': %s"
+
 	// validate data
 	if err := validateRectangleDimensions(r); err != nil {
+		g.logger.Debugf(errTemplate, clientAddr, err.Error())
 		return nil, err
 	}
 	// compute info
 	area, err := g.ComputeRectangleArea(ctx, r)
 	if err != nil {
+		g.logger.Debugf(errTemplate, clientAddr, err.Error())
 		return nil, err
 	}
 	perimeter, err := g.ComputeRectanglePerimeter(ctx, r)
 	if err != nil {
+		g.logger.Debugf(errTemplate, clientAddr, err.Error())
 		return nil, err
 	}
 	measurements := make([]*shape.ShapeInfo_Mesurement, 3)
 	measurements = append(measurements, area)
 	measurements = append(measurements, perimeter)
 
-	return &shape.ShapeInfo{
+	si := &shape.ShapeInfo{
 		Id:          r.Id,
 		Shape:       shape.ShapeInfo_RECTANGLE,
 		Mesurements: measurements,
 		Timestamp:   timestamppb.New(time.Now()),
-	}, nil
-
+	}
+	g.logger.Tracef("Computing GeometryServer/RectangleInfo and sent to '%s': %#v", clientAddr, si)
+	return si, nil
 }
 
 func (g *GeometryServer) ComputeRectanglePerimeter(ctx context.Context, r *shape.Rectangle) (*shape.ShapeInfo_Mesurement, error) {

@@ -10,5 +10,5 @@ package dataserver
 const (
 	workerChanSize    int   = 1000
 	numWorkersStore   int   = 15
-	streamSendDelayMs int64 = 100
+	streamSendDelayMs int64 = 200
 )

@@ -85,6 +85,7 @@ func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, k
 	}
 
 	// wait for store to finish reading
+	//since the server's serve is blocking (and shutdown closes all workers), a wait group is not needed
 	storeWg.Wait()
 
 	// server is shutdown
