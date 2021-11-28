@@ -25,7 +25,8 @@ func InfoClient(c *ServiceClient) {
 	defer c.wg.Done()
 
 	// create a connection
-	conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(c.creds))
+	//conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(c.creds))
+	conn, err := grpc.Dial(c.addr, grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}
