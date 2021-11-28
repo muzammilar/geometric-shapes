@@ -22,7 +22,7 @@ service Store {
     // A Bidirectional streaming RPC.
     //
     // Accepts a stream of shape.Identifier and returns it to the client.
-    rpc AsyncReplay(stream shape.Identifier) returns (stream shape.Identifier) {}
+    rpc Replay(stream shape.Identifier) returns (stream shape.Identifier) {}
 
 
 }

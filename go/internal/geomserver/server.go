@@ -63,8 +63,12 @@ func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, k
 	if err := serverRegistrar.Serve(listener); err != nil {
 		logger.Errorf("gRPC Server '%T' failed to serve on the listener with err: %s", serverRegistrar, err)
 	}
+
+	// wait for store to finish reading
+	geomWg.Wait()
+
 	// server is shutdown
-	logger.Errorf("gRPC Server has shutdown: %#v", serverRegistrar)
+	logger.Infof("gRPC Server has shutdown: %#v", serverRegistrar)
 
 }
 

@@ -28,7 +28,7 @@ type StoreClient interface {
 	// A Bidirectional streaming RPC.
 	//
 	// Accepts a stream of shape.Identifier and returns it to the client.
-	AsyncReplay(ctx context.Context, opts ...grpc.CallOption) (Store_AsyncReplayClient, error)
+	Replay(ctx context.Context, opts ...grpc.CallOption) (Store_ReplayClient, error)
 }
 
 type storeClient struct {
@@ -73,30 +73,30 @@ func (x *storeCuboidClient) CloseAndRecv() (*emptypb.Empty, error) {
 	return m, nil
 }
 
-func (c *storeClient) AsyncReplay(ctx context.Context, opts ...grpc.CallOption) (Store_AsyncReplayClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Store_ServiceDesc.Streams[1], "/shapestore.Store/AsyncReplay", opts...)
+func (c *storeClient) Replay(ctx context.Context, opts ...grpc.CallOption) (Store_ReplayClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Store_ServiceDesc.Streams[1], "/shapestore.Store/Replay", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &storeAsyncReplayClient{stream}
+	x := &storeReplayClient{stream}
 	return x, nil
 }
 
-type Store_AsyncReplayClient interface {
+type Store_ReplayClient interface {
 	Send(*shape.Identifier) error
 	Recv() (*shape.Identifier, error)
 	grpc.ClientStream
 }
 
-type storeAsyncReplayClient struct {
+type storeReplayClient struct {
 	grpc.ClientStream
 }
 
-func (x *storeAsyncReplayClient) Send(m *shape.Identifier) error {
+func (x *storeReplayClient) Send(m *shape.Identifier) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *storeAsyncReplayClient) Recv() (*shape.Identifier, error) {
+func (x *storeReplayClient) Recv() (*shape.Identifier, error) {
 	m := new(shape.Identifier)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ type StoreServer interface {
 	// A Bidirectional streaming RPC.
 	//
 	// Accepts a stream of shape.Identifier and returns it to the client.
-	AsyncReplay(Store_AsyncReplayServer) error
+	Replay(Store_ReplayServer) error
 	mustEmbedUnimplementedStoreServer()
 }
 
@@ -127,8 +127,8 @@ type UnimplementedStoreServer struct {
 func (UnimplementedStoreServer) Cuboid(Store_CuboidServer) error {
 	return status.Errorf(codes.Unimplemented, "method Cuboid not implemented")
 }
-func (UnimplementedStoreServer) AsyncReplay(Store_AsyncReplayServer) error {
-	return status.Errorf(codes.Unimplemented, "method AsyncReplay not implemented")
+func (UnimplementedStoreServer) Replay(Store_ReplayServer) error {
+	return status.Errorf(codes.Unimplemented, "method Replay not implemented")
 }
 func (UnimplementedStoreServer) mustEmbedUnimplementedStoreServer() {}
 
@@ -169,25 +169,25 @@ func (x *storeCuboidServer) Recv() (*shape.Cuboid, error) {
 	return m, nil
 }
 
-func _Store_AsyncReplay_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(StoreServer).AsyncReplay(&storeAsyncReplayServer{stream})
+func _Store_Replay_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StoreServer).Replay(&storeReplayServer{stream})
 }
 
-type Store_AsyncReplayServer interface {
+type Store_ReplayServer interface {
 	Send(*shape.Identifier) error
 	Recv() (*shape.Identifier, error)
 	grpc.ServerStream
 }
 
-type storeAsyncReplayServer struct {
+type storeReplayServer struct {
 	grpc.ServerStream
 }
 
-func (x *storeAsyncReplayServer) Send(m *shape.Identifier) error {
+func (x *storeReplayServer) Send(m *shape.Identifier) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *storeAsyncReplayServer) Recv() (*shape.Identifier, error) {
+func (x *storeReplayServer) Recv() (*shape.Identifier, error) {
 	m := new(shape.Identifier)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -209,8 +209,8 @@ var Store_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "AsyncReplay",
-			Handler:       _Store_AsyncReplay_Handler,
+			StreamName:    "Replay",
+			Handler:       _Store_Replay_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

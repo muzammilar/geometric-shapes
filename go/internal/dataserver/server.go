@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
+	"github.com/muzammilar/geometric-shapes/protos/shape"
 	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"github.com/sirupsen/logrus"
 )
@@ -30,20 +31,34 @@ func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, k
 		defer wg.Done()
 	}
 
+	// store service and worker service Wait Group
+	var storeWg, workerWg sync.WaitGroup
+
+	// create channels for storing the data
+	// pointer channels are lightweight (as compared to struct)
+	// however, the data is not necessarily thread safe generally (since the channel copies the pointer only and not the struct)
+	// this is okay for unidirectional flow of pointers (i.e. one routine writes, others read)
+	chCuboid := make(chan *shape.Cuboid, workerChanSize)
+
+	// start the workers for handling storage
+	workerWg.Add(numWorkersStore)
+	for i := 0; i < numWorkersStore; i++ {
+		go cuboidStoreWorker(&workerWg, i, chCuboid, logger)
+	}
+
 	// create a grpc server
 	serverRegistrar := grpcserver.CreateServerWithStatsAndTLS(certFile, keyFile, logger)
 
-	// store server Wait Group
-	var storeWg sync.WaitGroup
-
 	// create a handler for store service
 	storeHandler := &StoreServer{
-		logger: logger,
-		wg:     &storeWg,
+		logger:   logger,
+		wg:       &storeWg,
+		chCuboid: chCuboid,
 	}
 
 	// create a handler for generator service
 	generatorHandler := &GeneratorServer{
+		ctx:    ctx,
 		logger: logger,
 		wg:     &storeWg,
 	}
@@ -68,11 +83,33 @@ func Serve(wg *sync.WaitGroup, ctx context.Context, port int, certFile string, k
 	if err := serverRegistrar.Serve(listener); err != nil {
 		logger.Errorf("gRPC Server '%T' failed to serve on the listener with err: %s", serverRegistrar, err)
 	}
-	// server is shutdown
-	logger.Errorf("gRPC Server has shutdown: %#v", serverRegistrar)
 
+	// wait for store to finish reading
+	storeWg.Wait()
+
+	// server is shutdown
+	logger.Infof("gRPC Server has shutdown: %#v", serverRegistrar)
+
+	// close the channels
+	close(chCuboid)
+
+	// wait for internal workers to finish
+	logger.Infof("Waiting for internal storage workers to finish: %#v", workerWg)
+	workerWg.Wait()
+	logger.Infof("Waiting for internal storage workers to finish: %#v", workerWg)
 }
 
 /*
  * Private Functions
  */
+
+func cuboidStoreWorker(wg *sync.WaitGroup, id int, chCuboid <-chan *shape.Cuboid, logger *logrus.Logger) {
+
+	// notify the wait group
+	defer wg.Done()
+
+	for cuboid := range chCuboid { // blocking read (and will break on channel close)
+		logger.Tracef("Database action taken on cuboid from worker-%d: %#v", id, cuboid)
+	}
+
+}

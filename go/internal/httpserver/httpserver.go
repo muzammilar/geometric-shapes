@@ -11,11 +11,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"sync"
 
-	"github.com/muzammilar/geometric-shapes/protos/shape"
+	"github.com/muzammilar/geometric-shapes/pkg/geomgenerator"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )
@@ -86,14 +85,7 @@ func hellogrpc(w http.ResponseWriter, req *http.Request) {
 // An example of handling a basic hello world response with json (and protobufs)
 func hellojson(w http.ResponseWriter, req *http.Request) {
 	// create a random cuboid structure
-	cuboid := &shape.Cuboid{
-		Id: &shape.Identifier{
-			Id: int64(rand.Uint32()),
-		},
-		Length: int64(10 + rand.Uint32()%25),
-		Width:  int64(1 + rand.Uint32()%10),
-		Height: int64(1 + rand.Uint32()%25),
-	}
+	cuboid := geomgenerator.Cuboid()
 	// The performance of structs to json is generally slow since the json package is slow (and reflection is often involved)
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(cuboid)
