@@ -49,7 +49,8 @@ func (g GRPCStats) HandleRPC(ctx context.Context, rpcStats stats.RPCStats) {
 	case *stats.OutPayload:
 		grpcmetrics.PayloadBytes.WithLabelValues(methodName, "out", "compressed", strconv.FormatBool(stat.Client)).Observe(float64(stat.WireLength))
 		grpcmetrics.PayloadBytes.WithLabelValues(methodName, "out", "uncompressed", strconv.FormatBool(stat.Client)).Observe(float64(stat.Length))
-	case *stats.InHeader: // These metrics are not very beneficial
+	case *stats.InHeader:
+		grpcmetrics.MethodCalls.WithLabelValues(stat.FullMethod).Inc()
 		grpcmetrics.HeaderBytes.WithLabelValues(stat.FullMethod, "in", strconv.FormatBool(stat.Client)).Observe(float64(stat.WireLength))
 	case *stats.OutTrailer:
 		grpcmetrics.TrailerBytes.WithLabelValues(method, "out", strconv.FormatBool(stat.Client)).Observe(float64(stat.WireLength))

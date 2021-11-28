@@ -19,3 +19,5 @@ The user needs to specify at least one key, however, they don't need to specify 
 * `ORCH` or `OC`: Orchestration/CI related
 * `MNR`: Minor edit; usually used for uncategorized changes
 * `NA`: Not applicable
+* `MON`: Monitoring
+* `TSK`: Task

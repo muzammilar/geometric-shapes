@@ -12,6 +12,7 @@ import "github.com/prometheus/client_golang/prometheus"
 
 var (
 	// RPC Stats
+	MethodCalls  *prometheus.CounterVec
 	PayloadBytes *prometheus.SummaryVec
 	HeaderBytes  *prometheus.SummaryVec
 	TrailerBytes *prometheus.SummaryVec
@@ -39,6 +40,18 @@ func init() {
 // Initialize all supported the metrics
 func initializeMetrics(namespace string) {
 	// Create the required metrics
+
+	// Counters - RPC
+	MethodCalls = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: namespace,
+			Name:      "rpc_calls_total",
+			Help:      "The total number of remote procedure calls",
+		},
+		[]string{"method"},
+	)
+
+	// Summary - RPC
 	PayloadBytes = prometheus.NewSummaryVec(
 		prometheus.SummaryOpts{
 			Namespace:  namespace,
@@ -73,7 +86,7 @@ func initializeMetrics(namespace string) {
 		// direction can be in our out, compression is generally 'compressed' or 'uncompressed'
 	)
 
-	// Gauges
+	// Gauges - Conn
 	ConnectionsActive = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: namespace,
@@ -83,7 +96,7 @@ func initializeMetrics(namespace string) {
 		[]string{"client"},
 	)
 
-	// Vectors
+	// Counters - Conn
 	ConnectionsTotal = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
 			Namespace: namespace,
@@ -97,10 +110,14 @@ func initializeMetrics(namespace string) {
 
 // Register the relavant metrics
 func registerMetrics() {
+
+	// RPC
+	prometheus.MustRegister(MethodCalls)
 	prometheus.MustRegister(PayloadBytes)
 	prometheus.MustRegister(HeaderBytes)
 	prometheus.MustRegister(TrailerBytes)
 
+	// Conn
 	prometheus.MustRegister(ConnectionsActive)
 	prometheus.MustRegister(ConnectionsTotal)
 
