@@ -8,6 +8,8 @@ package client
  * Client Package
  */
 import (
+	"sync"
+
 	"github.com/muzammilar/geometric-shapes/protos/shapecalc"
 	"google.golang.org/grpc"
 )
@@ -22,18 +24,30 @@ func InfoClient(c *ServiceClient) {
 	// notify the wait group when client finishes
 	defer c.wg.Done()
 
+	// create a connection
 	conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(c.creds))
 	if err != nil {
 		panic(err)
 	}
-
 	defer conn.Close()
 
-	// example mux
+	// setup a shared wait group
+	var wg sync.WaitGroup
+
+	// setup a service client
 	infoClient := shapecalc.NewInfoClient(conn)
 	geometryClient := shapecalc.NewGeometryClient(conn)
 
 	c.logger.Infof("Info service client: %#v", infoClient)
 	c.logger.Infof("Geometry service client: %#v", geometryClient)
+
+	go func() {
+		wg.Add(1)
+
+		wg.Done()
+	}()
+
+	// wait for internal wait groups
+	wg.Wait()
 
 }

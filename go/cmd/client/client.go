@@ -85,8 +85,8 @@ func main() {
 	go client.GeneratorClient(dataClient)
 
 	// start shapestore - store client
-	wg.Add(1)
-	go client.StoreClient(dataClient)
+	//wg.Add(1)
+	//go client.StoreClient(dataClient)
 
 	//SignalHandler (blocking operation)
 	//sighandler.SignalHandler(cancel, logger)

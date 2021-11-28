@@ -13,7 +13,7 @@ docker-compose run --rm protobuilder
 # Since docker-compose currently doesn't support copying from local images (between multiple Dockerfiles),
 # we use the host Operating system to copy the files as needed.
 docker-compose up --detach --build basebuilder
-docker-compose run --rm basebuilder make
+docker-compose run --rm basebuilder make   # This needs to be called whenever code is modified
 # To access the container itself, use any of the following command(s)
 docker-compose run --rm basebuilder bash
 docker-compose run --rm basebuilder sh

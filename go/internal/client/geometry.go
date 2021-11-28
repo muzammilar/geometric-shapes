@@ -8,9 +8,8 @@ package client
  * Client Package
  */
 import (
-	"fmt"
+	"sync"
 
-	"github.com/muzammilar/geometric-shapes/protos/shapestore"
 	"google.golang.org/grpc"
 )
 
@@ -24,15 +23,24 @@ func GeometryClient(c *ServiceClient) {
 	// notify the wait group when client finishes
 	defer c.wg.Done()
 
+	// create a connection
 	conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(c.creds))
 	if err != nil {
 		panic(err)
 	}
-
 	defer conn.Close()
 
-	storeClient := shapestore.NewStoreClient(conn)
+	// setup a shared wait group
+	var wg sync.WaitGroup
 
-	fmt.Println(storeClient, c.ctx)
+	// setup a service client
 
+	go func() {
+		wg.Add(1)
+
+		wg.Done()
+	}()
+
+	// wait for internal wait groups
+	wg.Wait()
 }
