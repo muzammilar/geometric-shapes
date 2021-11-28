@@ -1,6 +1,7 @@
 version: '3.9'
 
 services:
+
   # protobuilder service can be used to (re)build protos
   protobuilder:
     build:
@@ -16,6 +17,7 @@ services:
     deploy:
       mode: replicated
       replicas: 1 # if replicas: 0 is used, then none of the other containers are started either
+
   # basebuilder service can be used to debug the builds
   basebuilder:
     build:
@@ -72,6 +74,17 @@ services:
     deploy:
       mode: replicated
       replicas: 6
+    networks:
+      - geomnetwork
+
+  # Prometheus
+  prometheus:
+    image: "prom/prometheus"
+    hostname: prometheus.svc.geometry
+    volumes:
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090 # http port
     networks:
       - geomnetwork
 

@@ -31,6 +31,10 @@ docker-compose run --rm  basebuilder make certs
 docker-compose up --build --detach
 
 ## Step 5:
+# Connect to prometheus and query for metrics.
+# Open your browser and go to `localhost:9090`
+
+## Step 6:
 # Shutdown everything (and remove networks and local images). Networks are removed in this.
 docker-compose down --volumes
 # Use `docker-compose down --rmi all --volumes` with above to images as well
