@@ -10,10 +10,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/muzammilar/geometric-shapes/internal/dataserver"
-	"github.com/muzammilar/geometric-shapes/internal/httpserver"
-	"github.com/muzammilar/geometric-shapes/internal/sighandler"
-	"github.com/muzammilar/geometric-shapes/pkg/logs"
+	"github.com/muzammilar/geomrpc/internal/dataserver"
+	"github.com/muzammilar/geomrpc/internal/httpserver"
+	"github.com/muzammilar/geomrpc/internal/sighandler"
+	"github.com/muzammilar/geomrpc/pkg/logs"
 )
 
 var (

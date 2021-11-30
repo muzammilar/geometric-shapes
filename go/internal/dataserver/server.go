@@ -13,9 +13,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
-	"github.com/muzammilar/geometric-shapes/protos/shape"
-	"github.com/muzammilar/geometric-shapes/protos/shapestore"
+	"github.com/muzammilar/geomrpc/pkg/grpcserver"
+	"github.com/muzammilar/geomrpc/protos/shape"
+	"github.com/muzammilar/geomrpc/protos/shapestore"
 	"github.com/sirupsen/logrus"
 )
 

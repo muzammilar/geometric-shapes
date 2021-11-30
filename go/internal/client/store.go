@@ -10,7 +10,7 @@ package client
 import (
 	"sync"
 
-	"github.com/muzammilar/geometric-shapes/protos/shapestore"
+	"github.com/muzammilar/geomrpc/protos/shapestore"
 	"google.golang.org/grpc"
 )
 

@@ -12,8 +12,8 @@ import (
 	"io"
 	"sync"
 
-	"github.com/muzammilar/geometric-shapes/protos/shape"
-	"github.com/muzammilar/geometric-shapes/protos/shapestore"
+	"github.com/muzammilar/geomrpc/protos/shape"
+	"github.com/muzammilar/geomrpc/protos/shapestore"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"

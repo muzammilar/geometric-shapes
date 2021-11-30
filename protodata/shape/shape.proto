@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package shape;
 
-option go_package = "github.com/muzammilar/geometric-shapes/protos/shape";
+option go_package = "github.com/muzammilar/geomrpc/protos/shape";
 
 import "google/protobuf/timestamp.proto";
 

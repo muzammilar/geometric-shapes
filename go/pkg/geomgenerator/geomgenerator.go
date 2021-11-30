@@ -3,7 +3,7 @@ package geomgenerator
 import (
 	"math/rand"
 
-	"github.com/muzammilar/geometric-shapes/protos/shape"
+	"github.com/muzammilar/geomrpc/protos/shape"
 )
 
 func Cuboid() *shape.Cuboid {

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package shapestore;
 
-option go_package = "github.com/muzammilar/geometric-shapes/protos/shapestore";
+option go_package = "github.com/muzammilar/geomrpc/protos/shapestore";
 
 import "shape/shape.proto";
 

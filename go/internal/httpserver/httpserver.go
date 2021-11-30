@@ -14,7 +14,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/muzammilar/geometric-shapes/pkg/geomgenerator"
+	"github.com/muzammilar/geomrpc/pkg/geomgenerator"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 )

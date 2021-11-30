@@ -5,7 +5,7 @@ COMMIT := $(shell /usr/bin/git describe --always)
 # the default application version
 DEFAULT_VERSION := 0.0.1
 # For now, we skip the "go" (for simplicty). If an external program imports it, they'll provide full path
-GOMODULENAME := "github.com/muzammilar/geometric-shapes"
+GOMODULENAME := "github.com/muzammilar/geomrpc"
 
 ## Versions
 SERVER_VERSION := ${DEFAULT_VERSION}

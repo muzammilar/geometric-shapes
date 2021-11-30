@@ -12,9 +12,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/muzammilar/geometric-shapes/pkg/geomgenerator"
-	"github.com/muzammilar/geometric-shapes/pkg/grpcserver"
-	"github.com/muzammilar/geometric-shapes/protos/shapestore"
+	"github.com/muzammilar/geomrpc/pkg/geomgenerator"
+	"github.com/muzammilar/geomrpc/pkg/grpcserver"
+	"github.com/muzammilar/geomrpc/protos/shapestore"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/emptypb"
 )

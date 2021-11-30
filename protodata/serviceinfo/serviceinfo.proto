@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package serviceinfo;
 
-option go_package = "github.com/muzammilar/geometric-shapes/protos/serviceinfo";
+option go_package = "github.com/muzammilar/geomrpc/protos/serviceinfo";
 
 message Info {
   Version version = 1; // server version

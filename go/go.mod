@@ -1,4 +1,4 @@
-module github.com/muzammilar/geometric-shapes
+module github.com/muzammilar/geomrpc
 
 go 1.17
 

@@ -8,8 +8,8 @@ import (
 	"io/ioutil"
 	"sync"
 
-	"github.com/muzammilar/geometric-shapes/internal/client"
-	"github.com/muzammilar/geometric-shapes/pkg/logs"
+	"github.com/muzammilar/geomrpc/internal/client"
+	"github.com/muzammilar/geomrpc/pkg/logs"
 	"google.golang.org/grpc/credentials"
 )
 

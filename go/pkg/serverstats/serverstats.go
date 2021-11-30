@@ -7,7 +7,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/muzammilar/geometric-shapes/pkg/grpcmetrics"
+	"github.com/muzammilar/geomrpc/pkg/grpcmetrics"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/stats"
 )

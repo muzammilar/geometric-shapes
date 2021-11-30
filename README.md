@@ -1,5 +1,5 @@
-# geometric-shapes
-An example of gRPC Servers and multi-lingual clients. A basic golang gRPC example with server certificates (in development) and metrics.
+# Geometric Shapes RPC
+An example of multi-lingual gRPC clients and servers to implement basic geometric computation on different shapes. The example illustrates usage both server certificates (in development) and metrics (using `stats.Handler` interface in golang). The performance impact of metrics calculation has not been evaluated.
 
 ```sh
 ## Step 1: (Can be skipped) (one time)
@@ -47,5 +47,5 @@ Some good gRPC examples are available here:
 * https://github.com/grpc/grpc-web
 
 ## Notes:
-Due to the go module being called `github.com/muzammilar/geometric-shapes` and not `github.com/muzammilar/geometric-shapes/go`, calling this go module from external repos, might lead to inconsistency.
-One way to solve this problem is to use multiple repositories. Another way to solve this is to move the go code to `github.com/muzammilar/geometric-shapes/go/geometric-shapes` and make that a new module (however, using `-` in package name can cause other side effects).
+Due to the go module being called `github.com/muzammilar/geomrpc` and not `github.com/muzammilar/geomrpc/go`, calling this go module from external repos, might lead to inconsistency.
+One way to solve this problem is to use multiple repositories. Another way to solve this is to move the go code to `github.com/muzammilar/geomrpc/go/geomrpc` and make that a new module (however, using `-` in package name can cause other side effects).
