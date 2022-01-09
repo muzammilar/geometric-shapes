@@ -51,21 +51,14 @@ func ShutDownServerWithTimeout(s *grpc.Server, t time.Duration) {
 	}()
 
 	timer := time.NewTimer(t)
-	running := true
 	// Either wait for timer to trigger or graceful shutdown to complete. Otherwise wait
-	for running {
-		select {
-		// Force stop after timeout
-		case <-timer.C:
-			s.Stop()
-			running = false
-		// If the gracefulClose channel is closed
-		case <-gracefulClose:
-			running = false
-		// Frequently re-check
-		default:
-			time.Sleep(t / 50)
-		}
+	select { // Do not specify a `default` case for this select, since a `default` case makes the code non-blocking (and requires a loop)
+	// Force stop after timeout
+	case <-timer.C:
+		s.Stop()
+	// If the gracefulClose channel is closed
+	case <-gracefulClose:
+		// do nothing
 	}
 }
 

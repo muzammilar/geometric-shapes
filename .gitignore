@@ -9,6 +9,4 @@ build/client
 build/goclient
 
 # VS Code Related files
-.vscode/configurationCache.log
-.vscode/dryrun.log
-.vscode/settings.json
+.vscode/*
