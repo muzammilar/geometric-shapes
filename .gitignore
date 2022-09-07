@@ -3,6 +3,8 @@ certs/*.key
 certs/*.crt
 certs/*.req
 certs/*.pem
+certs/*.srl
+
 
 # Build Files
 build/dataserver

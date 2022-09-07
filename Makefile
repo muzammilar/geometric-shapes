@@ -33,7 +33,10 @@ gomodule gomodinit ${GO_DATASERVER} ${GO_GEOMSERVER} ${GO_CLIENT}:
 	$(MAKE) $@ -C ${GODIR}
 
 clean_certs:
-	-rm -f certs/*
+	-rm -f certs/*.pem
+	-rm -f certs/*.key
+	-rm -f certs/*.crt
+	-rm -f certs/*.req
 
 # Create a self-signed Root CA and use the Root CA to sign the server cert
 certs: clean_certs
@@ -42,7 +45,7 @@ certs: clean_certs
 	openssl req -x509 -newkey rsa:4096 -sha256 -nodes \
 	-keyout certs/root.ca.key.pem -out certs/root.ca.crt.pem -days 365 \
 	-subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=root.ca.cert.com" \
-	-addext "subjectAltName=DNS:localhost,DNS:geomserver.geometry,DNS:dataserver.geometry"
+	-addext "subjectAltName=DNS:localhost"
 # Check the certificate
 	echo "CA's self-signed certificate"
 	openssl x509 -in certs/root.ca.crt.pem -noout -text
@@ -53,7 +56,7 @@ certs: clean_certs
 # Sign the server's CSR (.pem) using the Root CA and generate the cert
 	openssl x509 -req -in certs/server.grpc.req.pem -days 60 -CA certs/root.ca.crt.pem \
 	-CAkey certs/root.ca.key.pem -CAcreateserial -out certs/server.grpc.crt.pem \
-	-addext "subjectAltName=DNS:localhost,DNS:geomserver.geometry,DNS:dataserver.geometry"
+	-extfile certs/server.grpc.ext
 # Check the server's certificate
 	echo "Server's signed certificate"
 	openssl x509 -in certs/server.grpc.crt.pem -noout -text
