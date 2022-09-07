@@ -1,6 +1,8 @@
 # Certs files
 certs/*.key
 certs/*.crt
+certs/*.req
+certs/*.pem
 
 # Build Files
 build/dataserver

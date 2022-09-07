@@ -12,6 +12,7 @@ import (
 	"github.com/muzammilar/geomrpc/pkg/serverstats"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 // CreateServerWithStatsAndTLS creates a simple grpc server with TLS and stats collection enabled.
@@ -21,12 +22,11 @@ func CreateServerWithStatsAndTLS(certFile string, keyFile string, l *logrus.Logg
 
 	// TLS
 	// Generally panic is not a good way to handle errors. Allow it cos PoC
-	/*creds, err := credentials.NewClientTLSFromFile(certFile, keyFile)
+	creds, err := credentials.NewServerTLSFromFile(certFile, keyFile)
 	if err != nil {
 		panic(err)
 	}
 	opts = append(opts, grpc.Creds(creds))
-	*/
 
 	// Stats (by default no stats handler is configured)
 	// Note: Stats handlers can be very expensive and slow down grpc streams (especially for small messages)

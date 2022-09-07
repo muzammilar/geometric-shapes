@@ -1,5 +1,5 @@
 ARG TAG=latest
-ARG GO_VERSION=1.17
+ARG GO_VERSION=1.19
 
 ###############################################
 # build protobuf
@@ -7,8 +7,8 @@ ARG GO_VERSION=1.17
 FROM golang:${GO_VERSION}-alpine AS protobuilder
 #Versions
 ARG GO_VERSION
-ARG PROTOC_GEN_GO_VERSION=1.27
-ARG PROTOC_GEN_GO_GRPC_VERSION=1.1
+ARG PROTOC_GEN_GO_VERSION=1.28
+ARG PROTOC_GEN_GO_GRPC_VERSION=1.2
 # Install modules
 RUN apk add --no-cache git protoc make bash
 # Install protobuf dev headers (since we don't install from source, they're needed for import "google/...")

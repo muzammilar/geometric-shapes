@@ -74,8 +74,8 @@ services:
     deploy:
       mode: replicated
       replicas: 6
-      restart_policy:
-        condition: always
+      #restart_policy:
+      #  condition: always
     networks:
       - geomnetwork
 
