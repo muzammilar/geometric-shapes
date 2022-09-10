@@ -1,5 +1,5 @@
 # Geometric Shapes RPC
-An example of multi-lingual gRPC clients and servers to implement basic geometric computation on different shapes. The example illustrates usage both server certificates (in development) and metrics (using `stats.Handler` interface in golang). The performance impact of metrics calculation has not been evaluated.
+An example of multi-lingual gRPC clients and servers to implement basic geometric computation on different shapes. The example illustrates usage both server certificates and metrics (using `stats.Handler` interface in golang). The performance impact of metrics calculation has not been evaluated.
 
 ```sh
 ## Step 1: (Can be skipped) (one time)

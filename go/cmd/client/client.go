@@ -1,4 +1,4 @@
-// The geomserver is TODO application
+// The goclient is a client for (streaming, uni and bidirectional) from geomserver and dataserver
 package main
 
 import (

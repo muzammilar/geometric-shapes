@@ -1,4 +1,4 @@
-// The geomserver is TODO application
+// The dataserver is a server application for data storage
 package main
 
 import (

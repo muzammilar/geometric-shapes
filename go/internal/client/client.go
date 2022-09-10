@@ -13,6 +13,9 @@ import (
 	"sync"
 
 	"github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 /*
@@ -38,4 +41,14 @@ func NewServiceClient(wg *sync.WaitGroup, addr string, tlsConf *tls.Config, inse
 		tlsConf:      tlsConf,
 		insecureConn: insecureConn,
 	}
+}
+
+func (c *ServiceClient) TLSOptions() grpc.DialOption {
+
+	// grpc dial options (with or without TLS)
+	if c.insecureConn { // if tls is diabled
+		return grpc.WithTransportCredentials(insecure.NewCredentials())
+	}
+	// dial option for grpc - tls
+	return grpc.WithTransportCredentials(credentials.NewTLS(c.tlsConf))
 }

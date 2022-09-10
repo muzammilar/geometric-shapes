@@ -1,4 +1,4 @@
-// The geomserver is TODO application
+// The geomserver is a server application for geometry
 package main
 
 import (

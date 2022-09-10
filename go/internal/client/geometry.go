@@ -24,8 +24,9 @@ func GeometryClient(c *ServiceClient) {
 	defer c.wg.Done()
 
 	// create a connection
-	//conn, err := grpc.Dial(c.addr, grpc.WithTransportCredentials(c.creds))
-	conn, err := grpc.Dial(c.addr, grpc.WithInsecure())
+	opts := []grpc.DialOption{c.TLSOptions()}
+	conn, err := grpc.Dial(c.addr, opts...)
+
 	if err != nil {
 		panic(err)
 	}
