@@ -27,13 +27,13 @@ func main() {
 
 	// flags
 	var grpcPort int
-	httpPortPtr := flag.Int("httpport", 8123, "The port for the HTTP web server .")                         // skip validation
-	certFilePtr := flag.String("certfile", "/geometry/certs/server.grpc.crt", "The path of the cert file.") // skip path validation
-	keyFilePtr := flag.String("keyfile", "/geometry/certs/server.grpc.key", "The path of the key file.")    // skip path validation
-	logPathPtr := flag.String("logpath", "/var/log/geomserver.log", "The path of the logs file.")           // skip path validation
-	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                  // skip path validation
-	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                   // skip path validation
-	flag.IntVar(&grpcPort, "port", 8120, "The port for the gRPC data application.")                         // skip validation
+	httpPortPtr := flag.Int("httpport", 8123, "The port for the HTTP web server .")                                    // skip validation
+	certFilePtr := flag.String("certfile", "/geometry/certs/server/server.grpc.crt.pem", "The path of the cert file.") // skip path validation
+	keyFilePtr := flag.String("keyfile", "/geometry/certs/server/server.grpc.key.pem", "The path of the key file.")    // skip path validation
+	logPathPtr := flag.String("logpath", "/var/log/geomserver.log", "The path of the logs file.")                      // skip path validation
+	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                             // skip path validation
+	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                              // skip path validation
+	flag.IntVar(&grpcPort, "port", 8120, "The port for the gRPC data application.")                                    // skip validation
 
 	//parse flags
 	flag.Parse()

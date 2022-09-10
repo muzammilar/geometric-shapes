@@ -65,3 +65,5 @@ certs: clean_certs
 # Check the server's certificate
 	echo "Server's signed certificate"
 	openssl x509 -in certs/server/server.grpc.crt.pem -noout -text
+# For PoC, delete the Root's Key file so that it can not be reused
+	-rm -f certs/root/root.ca.key.pem
