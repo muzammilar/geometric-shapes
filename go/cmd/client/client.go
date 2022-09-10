@@ -3,14 +3,12 @@ package main
 
 import (
 	"context"
-	"crypto/x509"
 	"flag"
-	"io/ioutil"
 	"sync"
 
 	"github.com/muzammilar/geomrpc/internal/client"
+	"github.com/muzammilar/geomrpc/internal/tlsconf"
 	"github.com/muzammilar/geomrpc/pkg/logs"
-	"google.golang.org/grpc/credentials"
 )
 
 var (
@@ -24,9 +22,10 @@ func main() {
 	geomAddrPtr := flag.String("geomserver", "geomserver.geometry:8120", "The gRPC endpoint for connecting to the geometry server.") // skip validation
 	dataAddrPtr := flag.String("dataserver", "dataserver.geometry:8120", "The gRPC endpoint for connecting to the geometry server.") // skip validation
 	certFilePtr := flag.String("certfile", "/geometry/certs/server.grpc.crt", "The path of the cert file.")                          // skip path validation
+	insecureConnPtr := flag.Bool("insecure", false, "Use insecure gRPC connection instead of TLS connection.")                       // skip validation
 	logPathPtr := flag.String("logpath", "/var/log/goclient.log", "The path of the logs file.")                                      // skip path validation
-	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                                           // skip path validation
-	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                                            // skip path validation
+	logLevelPtr := flag.String("loglevel", "info", "The logging level for logrus.Logger.")                                           // skip validation
+	logStdOutPtr := flag.Bool("logstdout", false, "The logging level for logrus.Logger.")                                            // skip validation
 
 	//parse flags
 	flag.Parse()
@@ -35,6 +34,7 @@ func main() {
 	geomAddr := *geomAddrPtr
 	dataAddr := *dataAddrPtr
 	certFile := *certFilePtr
+	insecureConn := *insecureConnPtr
 	logPath := *logPathPtr
 	logLevel := *logLevelPtr
 	logStdOut := *logStdOutPtr
@@ -53,24 +53,15 @@ func main() {
 	// setup a wait group
 	var wg *sync.WaitGroup = new(sync.WaitGroup)
 
-	// setup the certificate
-
-	// Read cert file
-	serverCert, err := ioutil.ReadFile(certFile)
+	// setup the certificate (if needed)
+	tlsconf, err := tlsconf.ClientTLSConfigWithCustomRootCA(certFile, logger)
 	if err != nil {
 		panic(err)
 	}
 
-	// Create CertPool - This is only allowed cos it's a PoC
-	rootCerts := x509.NewCertPool()
-	rootCerts.AppendCertsFromPEM(serverCert)
-
-	// Create credentials
-	creds := credentials.NewClientTLSFromCert(rootCerts, "")
-
 	// clients
-	geomClient := client.NewServiceClient(wg, geomAddr, creds, logger, ctx)
-	dataClient := client.NewServiceClient(wg, dataAddr, creds, logger, ctx)
+	geomClient := client.NewServiceClient(wg, geomAddr, tlsconf, insecureConn, logger, ctx)
+	dataClient := client.NewServiceClient(wg, dataAddr, tlsconf, insecureConn, logger, ctx)
 
 	// start the shapecalc - geometry client
 	wg.Add(1)
