@@ -18,6 +18,7 @@ docker-compose run --rm basebuilder make   # This needs to be called whenever co
 docker-compose run --rm basebuilder bash
 docker-compose run --rm basebuilder sh
 docker-compose run --rm basebuilder /bin/sh
+docker-compose run --rm --entrypoint sh goclient
 
 ## Step 3: (One time only - Usually an offline stage)
 # Build the certs using basebuilder
