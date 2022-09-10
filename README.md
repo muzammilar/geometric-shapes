@@ -1,5 +1,5 @@
 # Geometric Shapes RPC
-An example of multi-lingual gRPC clients and servers to implement basic geometric computation on different shapes. The example illustrates usage both server certificates (in development) and metrics (using `stats.Handler` interface in golang). The performance impact of metrics calculation has not been evaluated.
+An example of multi-lingual gRPC clients and servers to implement basic geometric computation on different shapes. The example illustrates usage both server certificates and metrics (using `stats.Handler` interface in golang). The performance impact of metrics calculation has not been evaluated.
 
 ```sh
 ## Step 1: (Can be skipped) (one time)
@@ -14,7 +14,7 @@ docker-compose run --rm protobuilder
 # we use the host Operating system to copy the files as needed.
 docker-compose up --detach --build basebuilder
 docker-compose run --rm basebuilder make   # This needs to be called whenever code is modified
-# To access the container itself, use any of the following command(s)
+# Debug: To access the container itself, use any of the following command(s)
 docker-compose run --rm basebuilder bash
 docker-compose run --rm basebuilder sh
 docker-compose run --rm basebuilder /bin/sh
