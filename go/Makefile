@@ -18,27 +18,29 @@ PARENT_PATH:=$(abspath ..)
 DATASERVER:=${GO_DATASERVER}
 GEOMSERVER:=${GO_GEOMSERVER}
 CLIENT:=${GO_CLIENT}
+TEST_FLAGS:=${GO_TEST_FLAGS}
+BUILD_OPTS:=${GO_BUILD_OPTS}
 
 .PHONY: all clean test lint gomodule clean_gomodule gomodinit gomodtidy goget
 
 all: clean gomodtidy test ${DATASERVER} ${GEOMSERVER} ${CLIENT}
 
 ${DATASERVER}:
-	go build -ldflags "-X main.version=${SERVER_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${DATASERVER} ./cmd/dataserver/dataserver.go
+	go build -ldflags "-X main.version=${SERVER_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${DATASERVER} ${BUILD_OPTS} ./cmd/dataserver/dataserver.go
 
 ${GEOMSERVER}:
-	go build -ldflags "-X main.version=${SERVER_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${GEOMSERVER} ./cmd/geomserver/geomserver.go
+	go build -ldflags "-X main.version=${SERVER_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${GEOMSERVER} ${BUILD_OPTS} ./cmd/geomserver/geomserver.go
 
 ${CLIENT}:
-	go build -ldflags "-X main.version=${CLIENT_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${CLIENT} ./cmd/client/client.go
+	go build -ldflags "-X main.version=${CLIENT_VERSION}" -o ${PARENT_PATH}/${BUILD_DIR}/${CLIENT} ${BUILD_OPTS} ./cmd/client/client.go
 
 
 clean:
 	echo "Nothing to clean in ${PWD}"
 
 test:
-# check for raceconditions
-	go test -race ./...
+# check for race conditions (with a -race) and use -v for verbose
+	go test ${TEST_FLAGS} ./...
 # run the benchmark tests
 	go test -cpu ${BENCH_CPUS} -benchmem -benchtime ${BENCH_ITERATIONS}x -bench=. ./...
 

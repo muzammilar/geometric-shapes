@@ -11,6 +11,10 @@ GOMODULENAME := "github.com/muzammilar/geomrpc"
 SERVER_VERSION := ${DEFAULT_VERSION}
 CLIENT_VERSION := ${DEFAULT_VERSION}
 
+## Language Specific
+GO_TEST_FLAGS='-v -race'
+GO_BUILD_OPTS='-race'
+
 ## Applications
 GO_GEOMSERVER=geomserver
 GO_DATASERVER=dataserver
